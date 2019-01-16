@@ -5,7 +5,7 @@ namespace sp {
 	/*
 		simple initialize function
 	*/
-	VecF_t initv(int n, float val)
+	VecF_t initv(const int n, const float val)
 	{
 		return VecF_t(n, val);
 	}
@@ -13,7 +13,7 @@ namespace sp {
 	/*
 		Add two vectors, checking for correct dimensions.
 	*/
-	VecF_t addv(VecF_t vec_a, VecF_t vec_b)
+	VecF_t addv(const VecF_t vec_a, const VecF_t vec_b)
 	{
 
 		int n_a = vec_a.size();
@@ -30,7 +30,7 @@ namespace sp {
 	/*
 		Subtract two vectors, checking for correct dimensions.
 	*/
-	VecF_t subv(VecF_t vec_a, VecF_t vec_b)
+	VecF_t subv(const VecF_t vec_a, const VecF_t vec_b)
 	{
 		int n_a = vec_a.size();
 		int n_b = vec_b.size() == n_a ? vec_b.size() : throw std::runtime_error("addv(): Cannot add vectors of different dimensions!");
@@ -46,7 +46,7 @@ namespace sp {
 	/*
 	Dot product of two vectors, checking for correct dimensions.
 	*/
-	float dotv(VecF_t vec_a, VecF_t vec_b)
+	float dotv(const VecF_t vec_a, const VecF_t vec_b)
 	{
 		int n_a = vec_a.size();
 		int n_b = vec_b.size() == n_a ? vec_b.size() : throw std::runtime_error("addv(): Cannot add vectors of different dimensions!");
@@ -63,7 +63,7 @@ namespace sp {
 	/*
 	Scalar product of two vectors, checking for correct dimensions.
 	*/
-	VecF_t multv(VecF_t vec_a, VecF_t vec_b){
+	VecF_t multv(const VecF_t vec_a, const VecF_t vec_b){
 		int n_a = vec_a.size();
 		int n_b = vec_b.size() == n_a ? vec_b.size() : throw std::runtime_error("addv(): Cannot add vectors of different dimensions!");
 		VecF_t vec_c = sp::initv(n_b);
@@ -127,7 +127,7 @@ namespace sp {
 	/*
 	Adjust matrix size. If expanding, uses 0.0 as default.
 	*/
-	void resizem(MatF_t * p_mat, int n_new, int m_new)
+	void resizem(MatF_t * p_mat, const int n_new, const int m_new)
 	{
 		p_mat->resize(n_new, VecF_t(m_new, 0.0));
 		int rows = p_mat->size();
@@ -142,7 +142,7 @@ namespace sp {
 	/*
 	Print out the matrix.
 	*/
-	void printm(MatF_t & mat_a)
+	void printm(const MatF_t & mat_a)
 	{
 		for (auto& row : mat_a)
 		{
@@ -158,7 +158,7 @@ namespace sp {
 	/*
 	Add two matrices, checking for correct dimensions... to do in class.
 	*/
-	MatF_t addm(MatF_t mat_a, MatF_t mat_b){
+	MatF_t addm(const MatF_t mat_a, const MatF_t mat_b){
 
 		// Get sizes from matrices.
 		int a_Nrows = mat_a.size();
@@ -182,7 +182,7 @@ namespace sp {
 	/*
 	Multiply two matrices, checking for correct dimensions.
 	*/
-	MatF_t multm(MatF_t mat_a, MatF_t mat_b){
+	MatF_t multm(const MatF_t mat_a, const MatF_t mat_b){
 		// Get sizes from matrices.
 		int a_Nrows = mat_a.size();
 		int b_Nrows = mat_b.size();

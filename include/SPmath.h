@@ -20,19 +20,19 @@ namespace sp {
 
 	typedef std::vector<float> VecF_t;
 	typedef std::vector<VecF_t> MatF_t;
-	VecF_t initv(int n, float val = 0.0);
-	VecF_t addv(VecF_t vec_a, VecF_t  vec_b);
-	VecF_t subv(VecF_t vec_a, VecF_t  vec_b);
-	VecF_t multv(VecF_t vec_a, VecF_t vec_b);
-	float dotv(VecF_t vec_a, VecF_t vec_b);
+	VecF_t initv(const int n, const float val = 0.0);
+	VecF_t addv(const VecF_t vec_a, const VecF_t  vec_b);
+	VecF_t subv(const VecF_t vec_a, const VecF_t  vec_b);
+	VecF_t multv(const VecF_t vec_a, const VecF_t vec_b);
+	float dotv(const VecF_t vec_a, const VecF_t vec_b);
 
 
-	MatF_t initm(int n, int m, float val = 0);
+	MatF_t initm(const int n, const int m, const float val = 0);
 	void transposeRef(MatF_t& mat_a);
-	void resizem(MatF_t* p_mat, int n_new, int m_new);
-	void printm(MatF_t& mat_a);
-	MatF_t addm(MatF_t mat_a, MatF_t mat_b);
-	MatF_t multm(MatF_t mat_a, MatF_t mat_b);
+	void resizem(MatF_t* p_mat, const int n_new, const int m_new);
+	void printm(const MatF_t& mat_a);
+	MatF_t addm(const MatF_t mat_a, const MatF_t mat_b);
+	MatF_t multm(const MatF_t mat_a, const MatF_t mat_b);
 
 }
 #endif
