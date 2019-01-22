@@ -334,6 +334,30 @@ namespace sp {
 	}
 
 	/*
+	Subctract two matrices, checking for correct dimensions... to do in class.
+	*/
+	MatF_t subm(const MatF_t mat_a, const MatF_t mat_b) {
+
+		// Get sizes from matrices.
+		int a_Nrows = mat_a.size();
+		int b_Nrows = mat_b.size();
+		int a_Ncols = mat_a[0].size();
+		int b_Ncols = mat_b[0].size();
+
+		// Test that the matrices are of the same dimensions.
+		if (a_Nrows != b_Nrows || a_Ncols != b_Ncols) {
+			throw std::runtime_error("addm(): Cannot add matrices of different dimensions!");
+		}
+
+		MatF_t result;
+		result = initm(a_Nrows, a_Ncols, 0.0);
+		for (int i = 0; i < a_Nrows; i++) {
+			result[i] = subv(mat_a[i], mat_b[i]);
+		}
+		return MatF_t();
+	}
+
+	/*
 	Multiply two matrices, checking for correct dimensions.
 	*/
 	MatF_t multm(const MatF_t mat_a, const MatF_t mat_b){

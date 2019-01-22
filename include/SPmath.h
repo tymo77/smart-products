@@ -34,6 +34,7 @@ namespace sp {
 	void printm(const MatF_t& mat_a);
 	void swapRows(MatF_t & mat_a, const int n1, const int n2);
 	MatF_t addm(const MatF_t mat_a, const MatF_t mat_b);
+	MatF_t subm(const MatF_t mat_a, const MatF_t mat_b);
 	MatF_t multm(const MatF_t mat_a, const MatF_t mat_b);
 	float detm(const MatF_t mat_a);
 	void rref(MatF_t & mat_a);
