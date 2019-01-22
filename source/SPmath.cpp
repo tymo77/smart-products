@@ -1,4 +1,4 @@
-#include "..\include\SPmath.h"
+#include "../include/SPmath.h"
 #include <algorithm>
 
 namespace sp {

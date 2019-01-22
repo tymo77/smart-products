@@ -1,7 +1,7 @@
 #include<iostream>
 #include<stdlib.h>
 #include<vector>
-#include"..\..\include\SPmath.h"
+#include"../../include/SPmath.h"
 
 int main()
 {
