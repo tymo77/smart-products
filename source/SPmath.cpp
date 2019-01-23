@@ -88,9 +88,9 @@ namespace sp {
 	/*
 	Initialize an identity matrix.
 	*/
-	MatF_t initIdent(const int n, const float val)
+	MatF_t initIdent(const int n)
 	{
-		MatF_t result = MatF_t(n, VecF_t(n, val));
+		MatF_t result = MatF_t(n, VecF_t(n, 0.0f));
 
 		for (int i = 0; i < n; i++) {
 			result[i][i] = 1.0;
@@ -109,7 +109,7 @@ namespace sp {
 	/*
 	transpose matrix
 	*/
-	void transposeRef(MatF_t & mat_a)
+	MatF_t transposem(MatF_t mat_a)
 	{
 		int rows = mat_a.size();
 		int cols = mat_a[0].size();
@@ -143,6 +143,8 @@ namespace sp {
 				mat_a[i].resize(rows);
 			}
 		}
+
+		return mat_a;
 	}
 
 	/*
@@ -247,7 +249,7 @@ namespace sp {
 	/*
 	Invert a matrix.
 	*/
-	MatF_t invertm(MatF_t & mat_a)
+	MatF_t invertm(MatF_t mat_a)
 	{
 		int rows = mat_a.size();
 		int cols = mat_a[0].size();
@@ -330,7 +332,7 @@ namespace sp {
 		for ( int i = 0; i < a_Nrows; i++ ){
 			result[i] = addv (mat_a[i], mat_b[i]);			
 		}
-		return MatF_t();
+		return result;
 	}
 
 	/*
@@ -354,28 +356,31 @@ namespace sp {
 		for (int i = 0; i < a_Nrows; i++) {
 			result[i] = subv(mat_a[i], mat_b[i]);
 		}
-		return MatF_t();
+		return result;
 	}
 
 	/*
 	Multiply two matrices, checking for correct dimensions.
 	*/
-	MatF_t multm(const MatF_t mat_a, const MatF_t mat_b){
+	MatF_t multm(MatF_t mat_a, MatF_t mat_b){
 		// Get sizes from matrices.
 		int a_Nrows = mat_a.size();
 		int b_Nrows = mat_b.size();
+		mat_b = transposem(mat_b);
 		int a_Ncols = mat_a[0].size();
 		int b_Ncols = mat_b[0].size();
 
 		// Test that the matrices are of the same dimensions.
 		if ( a_Nrows != b_Nrows || a_Ncols != b_Ncols){
-			throw std::runtime_error("multm(): Cannot add matrices of different dimensions!");
+			throw std::runtime_error("multm(): Cannot multiply without matching dimensions!");
 		}
 
 		MatF_t result;
-		result = initm(a_Nrows, a_Ncols, 0.0);
+		result = initm(a_Nrows, b_Nrows, 0.0);
 		for ( int i = 0; i < a_Nrows; i++ ){
-			result[i] = multv (mat_a[i], mat_b[i]);			
+			for (int j = 0; j < b_Nrows; j++) {
+				result[i][j] = dotv(mat_a[i], mat_b[j]);
+			}
 		}
 		return result;
 	}

@@ -26,16 +26,16 @@ namespace sp {
 	VecF_t multv(const VecF_t vec_a, const VecF_t vec_b);
 	float dotv(const VecF_t vec_a, const VecF_t vec_b);
 
-	MatF_t initIdent(const int n, const float val);
+	MatF_t initIdent(const int n);
 	MatF_t initm(const int n, const int m, const float val = 0);
-	void transposeRef(MatF_t& mat_a);
-	MatF_t invertm(MatF_t& mat_a);
+	MatF_t transposem(MatF_t mat_a);
+	MatF_t invertm(MatF_t mat_a);
 	void resizem(MatF_t* p_mat, const int n_new, const int m_new);
 	void printm(const MatF_t& mat_a);
 	void swapRows(MatF_t & mat_a, const int n1, const int n2);
 	MatF_t addm(const MatF_t mat_a, const MatF_t mat_b);
 	MatF_t subm(const MatF_t mat_a, const MatF_t mat_b);
-	MatF_t multm(const MatF_t mat_a, const MatF_t mat_b);
+	MatF_t multm(MatF_t mat_a, MatF_t mat_b);
 	float detm(const MatF_t mat_a);
 	void rref(MatF_t & mat_a);
 
