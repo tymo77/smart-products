@@ -7,6 +7,7 @@
 #include<stdlib.h>
 #include<stdexcept>
 #include<exception>
+#include "SPmath.h"
 
 /*
 	Namespace Smart Products (sp)
