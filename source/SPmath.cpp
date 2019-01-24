@@ -6,7 +6,7 @@ namespace sp {
 	/*
 		simple initialize function
 	*/
-	VecF_t initv(const int n, const float val)
+	VecF_t initv(const unsigned int n, const float val)
 	{
 		return VecF_t(n, val);
 	}
@@ -17,8 +17,8 @@ namespace sp {
 	VecF_t addv(const VecF_t vec_a, const VecF_t vec_b)
 	{
 
-		int n_a = vec_a.size();
-		int n_b = vec_b.size() == n_a ? vec_b.size() : throw std::runtime_error("addv(): Cannot add vectors of different dimensions!");
+		unsigned int n_a = vec_a.size();
+		unsigned int n_b = vec_b.size() == n_a ? vec_b.size() : throw std::runtime_error("addv(): Cannot add vectors of different dimensions!");
 		VecF_t vec_c = sp::initv(n_b);
 		for (int i = 0; i < n_b; i++)
 		{
@@ -33,8 +33,8 @@ namespace sp {
 	*/
 	VecF_t subv(const VecF_t vec_a, const VecF_t vec_b)
 	{
-		int n_a = vec_a.size();
-		int n_b = vec_b.size() == n_a ? vec_b.size() : throw std::runtime_error("subv(): Cannot add vectors of different dimensions!");
+		unsigned int n_a = vec_a.size();
+		unsigned int n_b = vec_b.size() == n_a ? vec_b.size() : throw std::runtime_error("subv(): Cannot add vectors of different dimensions!");
 		VecF_t vec_c = sp::initv(n_b);
 		for (int i = 0; i < n_b; i++)
 		{
@@ -49,8 +49,8 @@ namespace sp {
 	*/
 	float dotv(const VecF_t vec_a, const VecF_t vec_b)
 	{
-		int n_a = vec_a.size();
-		int n_b = vec_b.size() == n_a ? vec_b.size() : throw std::runtime_error("dotv(): Cannot add vectors of different dimensions!");
+		unsigned int n_a = vec_a.size();
+		unsigned int n_b = vec_b.size() == n_a ? vec_b.size() : throw std::runtime_error("dotv(): Cannot add vectors of different dimensions!");
 
 		float result = 0.0;
 		for (int i = 0; i < n_b; i++)
@@ -65,8 +65,8 @@ namespace sp {
 	Scalar product of two vectors, checking for correct dimensions.
 	*/
 	VecF_t multv(const VecF_t vec_a, const VecF_t vec_b){
-		int n_a = vec_a.size();
-		int n_b = vec_b.size() == n_a ? vec_b.size() : throw std::runtime_error("multv(): Cannot add vectors of different dimensions!");
+		unsigned int n_a = vec_a.size();
+		unsigned int n_b = vec_b.size() == n_a ? vec_b.size() : throw std::runtime_error("multv(): Cannot add vectors of different dimensions!");
 		VecF_t vec_c = sp::initv(n_b);
 
 		for (int i = 0; i < n_b; i++)
@@ -80,7 +80,7 @@ namespace sp {
 	/*
 	simple initialize function
 	*/
-	MatF_t initm(const int n, const int m, const float val)
+	MatF_t initm(const unsigned int n, const unsigned int m, const float val)
 	{
 		return MatF_t(n, VecF_t(m, val));
 	}
@@ -88,7 +88,7 @@ namespace sp {
 	/*
 	Initialize an identity matrix.
 	*/
-	MatF_t initIdent(const int n)
+	MatF_t initIdent(const unsigned int n)
 	{
 		MatF_t result = MatF_t(n, VecF_t(n, 0.0f));
 
@@ -102,8 +102,139 @@ namespace sp {
 	Compute deteriminant of a matrix.
 	*/
 	float detm(MatF_t mat_a) {
+		float result = 1.0f;
+		unsigned int m = mat_a.size();
+		unsigned int n = mat_a[0].size();
 
-		return 0.0;
+		if (m != n){ throw std::runtime_error("detm(): Matrix must be square!"); }
+
+		// FORWARD ELIMINATION. Implemented from the algorithm on wikipedia XD
+		int h = 0;
+		int k = 0;
+		int i_max;
+		float temp_comp1, temp_comp2, f;
+		while (h < m && k < n) {
+
+			// Find the pivot in the k-th column.
+			i_max = 0;
+			temp_comp1 = 0.0; temp_comp2 = 0.0;
+
+			// Get the index of the maximum row in the column.
+			for (int i = h; i < m; i++) {
+				temp_comp2 = abs(mat_a[i][k]);
+				if (temp_comp2 > temp_comp1) {
+					i_max = i;
+					temp_comp1 = temp_comp2;
+				}
+			}
+
+			if (abs(mat_a[i_max][k]) == 0.0) {
+				// No pivot in this column. Pass to next column.
+				k = k + 1;
+			}
+			else {
+				if (h != i_max) {
+					//std::cout << "Swaping " << h << " and " << i_max << std::endl;
+					swapRows(mat_a, h, i_max); // Swap the pivot row with the current row.
+					result *= -1.0f; // If we swap, multiply the determinant by -1
+				}
+
+				// For all the rows below the pivot.
+				for (int i = h + 1; i < m; i++) {
+					f = mat_a[i][k] / mat_a[h][k]; // Get the factor to cancel the column under the pivot.
+
+					if (f != 0.0f) {
+						mat_a[i][k] = 0.0; // Fill with zeros.
+
+						// For all elements right of the pivot in this row.
+						for (int j = k + 1; j < n; j++) {
+							mat_a[i][j] = mat_a[i][j] - mat_a[h][j] * f; // Cancelation with the current pivot row.
+						}
+					}
+				}
+				h = h + 1;
+				k = k + 1;
+			}
+		}
+
+		for (int i = 0; i < n; i++) {
+			result *= mat_a[i][i];
+		}
+
+		//std::cout << "Forward Eliminated Matrix: " << std::endl;
+		//sp::printm(mat_a);
+
+		return result;
+	}
+
+	/*
+Compute deteriminant of a matrix.
+*/
+	int rankm(MatF_t mat_a) {
+		unsigned int m = mat_a.size();
+		unsigned int n = mat_a[0].size();
+		// FORWARD ELIMINATION. Implemented from the algorithm on wikipedia XD
+		int h = 0;
+		int k = 0;
+		int i_max;
+		float temp_comp1, temp_comp2, f;
+		int rank = std::max(m,n);
+		//std::cout << "Max rank: "<< rank << std::endl;
+		while (h < m && k < n) {
+
+			// Find the pivot in the k-th column.
+			i_max = 0;
+			temp_comp1 = 0.0; temp_comp2 = 0.0;
+
+			// Get the index of the maximum row in the column.
+			for (int i = h; i < m; i++) {
+				temp_comp2 = abs(mat_a[i][k]);
+				if (temp_comp2 > temp_comp1) {
+					i_max = i;
+					temp_comp1 = temp_comp2;
+				}
+			}
+
+			if (abs(mat_a[i_max][k]) == 0.0) {
+				// No pivot in this column. Pass to next column.
+				k = k + 1;
+			}
+			else {
+				if (h != i_max) {
+					//std::cout << "Swaping " << h << " and " << i_max << std::endl;
+					swapRows(mat_a, h, i_max); // Swap the pivot row with the current row.
+				}
+
+				// For all the rows below the pivot.
+				for (int i = h + 1; i < m; i++) {
+					f = mat_a[i][k] / mat_a[h][k]; // Get the factor to cancel the column under the pivot.
+
+					if (f != 0.0f) {
+						mat_a[i][k] = 0.0; // Fill with zeros.
+
+						// For all elements right of the pivot in this row.
+						for (int j = k + 1; j < n; j++) {
+							mat_a[i][j] = mat_a[i][j] - mat_a[h][j] * f; // Cancelation with the current pivot row.
+						}
+					}
+				}
+				h = h + 1;
+				k = k + 1;
+			}
+		}
+
+		for (int i = 0; i < n; i++) {
+			auto min_max = std::minmax_element(mat_a[i].begin(), mat_a[i].end());
+			if (*min_max.first == 0.0f && *min_max.second == 0.0f) { 
+				rank--;
+				//std::cout << "empty row" << std::endl;
+			}
+		}
+
+		//std::cout << "Forward Eliminated Matrix: " << std::endl;
+		//sp::printm(mat_a);
+
+		return rank;
 	}
 
 	/*
@@ -111,8 +242,8 @@ namespace sp {
 	*/
 	MatF_t transposem(MatF_t mat_a)
 	{
-		int rows = mat_a.size();
-		int cols = mat_a[0].size();
+		unsigned int rows = mat_a.size();
+		unsigned int cols = mat_a[0].size();
 		bool is_square = cols == rows ? true : false;
 		bool is_fat = cols > rows ? true : false;
 		if (is_fat)
@@ -160,8 +291,8 @@ namespace sp {
 	Get reduced row echelon form of a matrix.
 	*/
 	void rref(MatF_t & mat_a){
-		int m = mat_a.size();
-		int n = mat_a[0].size();
+		unsigned int m = mat_a.size();
+		unsigned int n = mat_a[0].size();
 		// FORWARD ELIMINATION. Implemented from the algorithm on wikipedia XD
 		int h = 0;
 		int k = 0;
@@ -251,8 +382,8 @@ namespace sp {
 	*/
 	MatF_t invertm(MatF_t mat_a)
 	{
-		int rows = mat_a.size();
-		int cols = mat_a[0].size();
+		unsigned int rows = mat_a.size();
+		unsigned int cols = mat_a[0].size();
 		if (rows != cols) {
 			throw std::runtime_error("invertm(): mat_a must be square.!");
 		}
@@ -283,7 +414,7 @@ namespace sp {
 	/*
 	Adjust matrix size. If expanding, uses 0.0 as default.
 	*/
-	void resizem(MatF_t * p_mat, const int n_new, const int m_new)
+	void resizem(MatF_t * p_mat, const unsigned int n_new, const unsigned int m_new)
 	{
 		p_mat->resize(n_new, VecF_t(m_new, 0.0));
 		int rows = p_mat->size();
@@ -317,10 +448,10 @@ namespace sp {
 	MatF_t addm(const MatF_t mat_a, const MatF_t mat_b){
 
 		// Get sizes from matrices.
-		int a_Nrows = mat_a.size();
-		int b_Nrows = mat_b.size();
-		int a_Ncols = mat_a[0].size();
-		int b_Ncols = mat_b[0].size();
+		unsigned int a_Nrows = mat_a.size();
+		unsigned int b_Nrows = mat_b.size();
+		unsigned int a_Ncols = mat_a[0].size();
+		unsigned int b_Ncols = mat_b[0].size();
 
 		// Test that the matrices are of the same dimensions.
 		if ( a_Nrows != b_Nrows || a_Ncols != b_Ncols){
@@ -341,10 +472,10 @@ namespace sp {
 	MatF_t subm(const MatF_t mat_a, const MatF_t mat_b) {
 
 		// Get sizes from matrices.
-		int a_Nrows = mat_a.size();
-		int b_Nrows = mat_b.size();
-		int a_Ncols = mat_a[0].size();
-		int b_Ncols = mat_b[0].size();
+		unsigned int a_Nrows = mat_a.size();
+		unsigned int b_Nrows = mat_b.size();
+		unsigned int a_Ncols = mat_a[0].size();
+		unsigned int b_Ncols = mat_b[0].size();
 
 		// Test that the matrices are of the same dimensions.
 		if (a_Nrows != b_Nrows || a_Ncols != b_Ncols) {
@@ -364,11 +495,11 @@ namespace sp {
 	*/
 	MatF_t multm(MatF_t mat_a, MatF_t mat_b){
 		// Get sizes from matrices.
-		int a_Nrows = mat_a.size();
-		int b_Nrows = mat_b.size();
+		unsigned int a_Nrows = mat_a.size();
+		unsigned int b_Nrows = mat_b.size();
 		mat_b = transposem(mat_b);
-		int a_Ncols = mat_a[0].size();
-		int b_Ncols = mat_b[0].size();
+		unsigned int a_Ncols = mat_a[0].size();
+		unsigned int b_Ncols = mat_b[0].size();
 
 		// Test that the matrices are of the same dimensions.
 		if ( a_Nrows != b_Nrows || a_Ncols != b_Ncols){

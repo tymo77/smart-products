@@ -47,7 +47,7 @@ int main()
 	//sp::printm(Bm);
 
 	std::cout << "Square Matrix: Cm = " << std::endl;
-	sp::MatF_t Cm = { { 0,0,1 },{ 0,1,0 },{ 1,0,0 }};
+	sp::MatF_t Cm = { { 0.9649, 0.9572, 0.1419},{ 0.9706, 0.8003, 0.9157},{ 0.9706, 0.8003, 0.9157}};
 	sp::printm(Cm);
 	//std::cout << "transposed: Cm = " << std::endl;
 	//sp::transposeRef(Cm);
@@ -58,4 +58,12 @@ int main()
 	//std::cout << "Cm resized with pointer" << std::endl;
 	//sp::resizem(&Cm, 5, 3);
 	//sp::printm(Cm);
+
+	std::cout << "Determinant of Cminv = " << std::endl;
+	float detC = sp::detm(Cm);
+	std::cout << detC << std::endl;
+
+	std::cout << "Rank of Cminv = " << std::endl;
+	int rankC = sp::rankm(Cm);
+	std::cout << rankC << std::endl;
 }
