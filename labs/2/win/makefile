@@ -1,11 +1,20 @@
 CPP = cl
-CPP_LIST = ..\labtwo.cpp ..\..\..\source\SPmath.cpp ..\..\..\source\SPmatrix.cpp
+src = ..\..\..\source\\
 
 build: main
 
-main: $(CPP_LIST)
-	$(CPP) /Fe..\bin\$(@B) $** /FC
+main: SPmatrix.obj SPmath.obj ..\labtwo.cpp
+	@echo Building lab file...
+	$(CPP) /Fe$@ $** /FC /EHsc /nologo
+	
+SPmatrix.obj: $(src)SPmatrix.cpp
+	@echo Building SPmatrix...
+	$(CPP) /c $** /EHsc /nologo
+	
+SPmath.obj: $(src)SPmath.cpp
+	@echo Building SPmath...
+	$(CPP) /c $** /EHsc /nologo
     
-
 clean:
-    del *.obj ..\bin\main.exe
+	@echo Cleaning...
+    del *.obj main.exe

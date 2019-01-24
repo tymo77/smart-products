@@ -1,12 +1,16 @@
 CPP = cl
-#OBJ_LIST = ..\labone.obj ..\..\..\source\SPmath.obj
-CPP_LIST = ..\labone.cpp ..\..\..\source\SPmath.cpp
+src = ..\..\..\source\\
 
 build: main
 
-main: $(CPP_LIST)
-	$(CPP) /Fe..\bin\$(@B) $** /FC
+main: SPmath.obj ..\labone.cpp
+	@echo Building lab file...
+	$(CPP) /Fe$@ $** /FC /EHsc /nologo
+	
+SPmath.obj: $(src)SPmath.cpp
+	@echo Building SPmath...
+	$(CPP) /c $** /EHsc /nologo
     
-
 clean:
-    del *.obj ..\bin\main.exe
+	@echo Cleaning...
+    del *.obj main.exe
