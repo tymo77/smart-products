@@ -3,67 +3,55 @@
 #include<vector>
 #include"../../include/SPmath.h"
 
-int main()
-{
+int main(){
 	/*
 		Main Code
 	*/
-	//sp::VecF_t A(10, 2.0), B(10, 3.0);
-	//sp::VecF_t C = sp::addv(A, B);
-	//std::cout << "Adding Vectors (C=A+B): C = " << std::endl;
-	//for (float elem : C)
-	//{
-	//	std::cout << elem << std::endl;
-	//}
+	sp::VecF_t A(10, 2.0), B(10, 3.0);
+	sp::VecF_t C = sp::addv(A, B);
+	std::cout << "Adding Vectors (C=A+B): C = " << std::endl;
+	for (float elem : C)
+	{
+		std::cout << elem << std::endl;
+	}
 
 	/*
-	Demonstrating use of runtime_error for 
+	Demonstrating use of runtime_error for
 	vector dimensional mismatch.
 	*/
-	//sp::VecF_t D(9, 2.0), E(10, 3.0);
-	//sp::VecF_t F;
-	//try
-	//{
-	//	F = sp::addv(D, B);
-	//}
-	//catch (const std::exception& e)
-	//{
-	//	std::cout <<"error!: "<< e.what() << std::endl<<std::endl;
-	//}
+	sp::VecF_t D(9, 2.0), E(10, 3.0);
+	sp::VecF_t F;
+	try
+	{
+		F = sp::addv(D, B);
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << "error!: " << e.what() << std::endl << std::endl;
+	}
 
 
-	//std::cout << "Fat Matrix: Am = " << std::endl;
-	//sp::MatF_t Am = { A, B, C };
-	//sp::printm(Am);
-	//std::cout << "transposed: Am = " << std::endl;
-	//sp::transposeRef(Am);
-	//sp::printm(Am);
+	std::cout << "Fat Matrix: Am = " << std::endl;
+	sp::MatF_t Am = { A, B, C };
+	sp::printm(Am);
+	std::cout << "transposed: Am = " << std::endl;
+	sp::transposemRef(Am);
+	sp::printm(Am);
 
-	//std::cout << "Skinny Matrix: Bm = " << std::endl;
-	//sp::MatF_t Bm = { {1,1,1},{2,2,2},{3,3,3},{4,4,4},{5,5,5} };
-	//sp::printm(Bm);
-	//std::cout << "transposed: Bm = " << std::endl;
-	//sp::transposeRef(Bm);
-	//sp::printm(Bm);
+	std::cout << "Skinny Matrix: Bm = " << std::endl;
+	sp::MatF_t Bm = { {1,1,1},{2,2,2},{3,3,3},{4,4,4},{5,5,5} };
+	sp::printm(Bm);
+	std::cout << "transposed: Bm = " << std::endl;
+	sp::transposemRef(Bm);
+	sp::printm(Bm);
 
 	std::cout << "Square Matrix: Cm = " << std::endl;
-	sp::MatF_t Cm = { { 0.9649, 0.9572, 0.1419},{ 0.9706, 0.8003, 0.9157},{ 0.9706, 0.8003, 0.9157}};
+	sp::MatF_t Cm = { { 1,1,1 },{ 2,2,2 },{ 3,3,3 } };
 	sp::printm(Cm);
-	//std::cout << "transposed: Cm = " << std::endl;
-	//sp::transposeRef(Cm);
-	//sp::printm(Cm);
-	std::cout << "Inverse: Cminv = " << std::endl;
-	sp::MatF_t Cminv = sp::invertm(Cm);
-	sp::printm(Cminv);
-	//std::cout << "Cm resized with pointer" << std::endl;
-	//sp::resizem(&Cm, 5, 3);
-	//sp::printm(Cm);
-
-	std::cout << "Determinant of Cminv = " << std::endl;
-	float detC = sp::detm(Cm);
-	std::cout << detC << std::endl;
-
-	std::cout << "Rank of Cminv = " << std::endl;
-	int rankC = sp::rankm(Cm);
-	std::cout << rankC << std::endl;
+	std::cout << "transposed: Cm = " << std::endl;
+	sp::transposemRef(Cm);
+	sp::printm(Cm);
+	std::cout << "Cm resized with pointer" << std::endl;
+	sp::resizem(&Cm, 5, 3);
+	sp::printm(Cm);
 }
