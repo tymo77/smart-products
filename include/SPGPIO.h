@@ -11,9 +11,9 @@
 #include <sys/mman.h>
 #include <cstdint>
 #include <memory>
-#include<stdexcept>
-#include<exception>
-#include<string>
+#include <stdexcept>
+#include <exception>
+#include <string>
 #include <iostream>
 
 
@@ -113,7 +113,7 @@ namespace sp {
 		};
 
 		// these virtual functions must be overwritten
-		virtual int  pinMode(int, PinModes) = 0;
+		virtual int pinMode(int, PinModes) = 0;
 		virtual int digitalRead(int) = 0;
 		virtual int digitalWrite(int, DigitalOut) = 0;
 		virtual PinSettings getPinSettings(int pinNumber, DigitalOut outValue = DigitalOut::LOW) { return PinSettings(); }
