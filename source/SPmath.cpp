@@ -139,7 +139,6 @@ namespace sp {
 			}
 			else {
 				if (h != i_max) {
-					//std::cout << "Swaping " << h << " and " << i_max << std::endl;
 					swapRows(mat_a, h, i_max); // Swap the pivot row with the current row.
 					result *= -1.0f; // If we swap, multiply the determinant by -1
 				}
@@ -333,17 +332,19 @@ namespace sp {
 			}
 		}
 
-		//printm(mat_a);
+
 		// BACKWARD ELIMINATION.
 		// Start in the bottom left. Search right for a pivot. Then move up row by row.
 		h = m - 1;
 		k = 0;
-		while (h >= 0) {//Run until we get to the top of the matrix.
-			//printf("(%d, %d)", h, k);
+
+		// Run until we get to the top of the matrix.
+		while (h >= 0) {
+
 			// If the current position is non-zero. (A pivot)
 			f = mat_a[h][k];
 			if (f != 0.0) {
-				//printf("\n");
+
 				// Divide through the row by the pivot.
 				for (int j = k; j < n; j++) {
 					mat_a[h][j] = mat_a[h][j] / f;
@@ -400,6 +401,13 @@ namespace sp {
 
 		// Get reduced-row echelon form of the new matrix.
 		rref(mat_a);
+
+		// If there is a zero-diagonal on the left side, throw matrix is not invertible.
+		for (int i = 0; i < N; i++) {
+			if (mat_a[i][i] == 0.0f) {
+				throw std::runtime_error("invertm(): mat_a is not invertible");
+			}
+		}
 
 		// Get the right side of the matrix.
 		MatF_t mat_b;
