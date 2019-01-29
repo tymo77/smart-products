@@ -37,3 +37,7 @@ bin/
 *.log
 *.out
 *synctex.gz
+
+#Submission files
+SP19_lab*_Morrison_730
+*.zip
