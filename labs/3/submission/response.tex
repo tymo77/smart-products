@@ -1,0 +1,136 @@
+\documentclass{article}
+\usepackage[letterpaper, total={7in, 8in}]{geometry}
+\usepackage[utf8]{inputenc}
+%\usepackage[english]{babel}
+\usepackage[]{amsthm} %lets us use \begin{proof}
+\usepackage[]{amsmath}
+\usepackage[]{amssymb} %gives us the character \varnothing
+\usepackage{mathrsfs}
+\usepackage{graphicx}
+\usepackage{adjustbox}
+\usepackage{titlesec}
+\usepackage[numbered,framed]{matlab-prettifier}
+\usepackage{listings}
+\usepackage[t1,OT1]{fontenc}
+\usepackage{filecontents}
+\usepackage{float}
+\usepackage{physics}
+\usepackage{csvsimple}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{algorithmicx}
+\usepackage{mathtools}
+\usepackage{breqn}
+\usepackage{framed,color}
+\usepackage{amsmath,mleftright}
+\usepackage{xparse}
+\usepackage{titling}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\usepackage{hyperref}
+
+\setlength{\droptitle}{-10em}   % This is your set screw
+
+\NewDocumentCommand{\evalat}{sO{\big}mm}{%
+	\IfBooleanTF{#1}
+	{\mleft. #3 \mright|_{#4}}
+	{#3#2|_{#4}}%
+}
+
+
+\DeclareMathOperator{\atantwo}{atan2}
+
+\titleformat{\section}{\normalfont\Large\bfseries}{Section \thesection.}{1em}{}
+\titleformat{\subsection}[runin]{\normalfont\bfseries}{\alph{subsection})}{1em}{}
+%\definecolor{shadecolor}{gray}{0.9}
+
+\title{Smart Products Lab 1 \& 2}
+\author{Tyler Morrison}
+\date\today
+
+%\lstset{
+%	style              = Matlab-editor,
+%	basicstyle         = \mlttfamily,
+%	escapechar         = ",
+%	mlshowsectionrules = true,
+%	literate = {-}{-}1, % <hyphens will not show up unless you add this
+%}
+
+\lstset{
+	language=C++,
+	basicstyle=\ttfamily,
+	keywordstyle=\color{blue}\ttfamily,
+	stringstyle=\color{red}\ttfamily,
+	commentstyle=\color{green}\ttfamily,
+	morecomment=[l][\color{magenta}]{\#},
+	numbers=left,
+	stepnumber=1,
+	frame=single
+}
+
+\renewcommand{\lstlistingname}{Program}% Listing -> Algorithm
+
+\begin{document}
+\maketitle
+\section{}
+\subsection{Data Structures}
+Vectors are formed as vectors of floats using the STL container \texttt{vector<int>}. Matrices are vectors of vectors (i.e: \texttt{vector<vector<int>>}).
+
+\subsection{Extra Functions}
+
+\begin{itemize}
+	\item \texttt{float dotv(const VecF_t, const VecF_t)}: Dot product of two vectors.
+	\item \texttt{MatF_t initIdent(const unsigned int)}: Initialize an identity matrix.
+	\item \texttt{void swapRows(MatF_t\&, const int, const int)}: Swap two rows of a matrix.
+	\item \texttt{float detm(const MatF_t)}: Compute determinant of a matrix. (Gauss-based)
+	\item \texttt{void rref(MatF_t\&)}: Get reduced row-echelon form of matrix. (Gauss-based)
+	\item \texttt{int rankm(const MatF_t)}: Get rank of a matrix. (Gauss-based)
+%	\item \texttt{}:
+\end{itemize}
+
+\subsection{Implementation of SPMath functions in SPmatrix}
+The matrix class in \texttt{SPmatrix} calls functions from \texttt{SPmath} whenever it can so that functions are not redefined. For example:
+
+
+\begin{lstlisting}
+MatF MatF::inv() {
+	MatF B(invertm(mat_data_));
+	return B;
+}
+\end{lstlisting}
+
+\section{}
+\subsection{Matrix inversion algorithm}
+To do matrix inversion, I used the forward elimination algorithm from  \href{https://en.wikipedia.org/wiki/Gaussian_elimination#Pseudocode}{Wikipedia: Gaussian elimination}, and completed the backward elimination myself.
+\subsection{Technique name}
+An algorithm for Gaussian-Jordan elimination with pivots selected for largest magnitude is used because it has relatively low complexity with $\mathcal{O}(n^3)$ and good numerical stability for poorly conditioned matrices.
+\subsection{Invertible check method}
+A check was added to invertm() to determine if, after Gauss-Jordan elimination, the left hand side of the composite matrix has any zeros in the diagonal.
+
+This is, of course, a tad inefficient, as it adds overhead to cases where the matrix is non invertible, but in those cases, performance is usually not the limiting issue. IMHO it is better to limit the peformance of the non-invertible cases with a post-hoc test than hurt the invertible cases with a costly check before calling or increase complexity by restructuring the library to include a test partway through inversion (which would be optimal.) \href{https://github.com/tymo77/smart-products/commit/499b9f5e1da824d2720f8168dcaf1bd210213484}{\texttt{Commit\# 499b9f5e1}}
+
+\section{}
+\subsection{What info do you think would have helped you to better complete the lab?}
+Nothing that I can think of right now.
+
+\subsection{Output from labone.cpp and labtwo.cpp}
+Included below are the outputs of the compiled programs.
+
+\lstset{
+	language={},
+	basicstyle=\ttfamily,
+	keywordstyle=\color{blue}\ttfamily,
+	stringstyle=\color{red}\ttfamily,
+	commentstyle=\color{green}\ttfamily,
+	morecomment=[l][\color{magenta}]{\#},
+	numbers=left,
+	stepnumber=1,
+	frame=single
+}
+\lstinputlisting[caption = {Output of labtwo.cpp}]{../../1/win/main.log}
+\lstinputlisting[caption = {Output of labtwo.cpp}]{../win/main.log}
+%\appendix
+%\section{Appendix of Programs}
+%{\fontencoding{T1}\selectfont\lstinputlisting[caption = {\href{run:./hw2.m}{Homework .m file}}]{./hw2.m}}
+\end{document}
