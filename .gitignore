@@ -31,3 +31,9 @@
 *.out
 *.app
 bin/
+
+# Tex build files
+*.aux
+*.log
+*.out
+*synctex.gz

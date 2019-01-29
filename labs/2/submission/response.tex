@@ -1,0 +1,90 @@
+\documentclass{article}
+\usepackage[letterpaper, total={7in, 8in}]{geometry}
+\usepackage[utf8]{inputenc}
+%\usepackage[english]{babel}
+\usepackage[]{amsthm} %lets us use \begin{proof}
+\usepackage[]{amsmath}
+\usepackage[]{amssymb} %gives us the character \varnothing
+\usepackage{mathrsfs}
+\usepackage{graphicx}
+\usepackage{adjustbox}
+\usepackage{titlesec}
+\usepackage[numbered,framed]{matlab-prettifier}
+\usepackage{listings}
+\usepackage[t1,OT1]{fontenc}
+\usepackage{filecontents}
+\usepackage{float}
+\usepackage{physics}
+\usepackage{csvsimple}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{algorithmicx}
+\usepackage{mathtools}
+\usepackage{breqn}
+\usepackage{framed,color}
+\usepackage{amsmath,mleftright}
+\usepackage{xparse}
+\usepackage{titling}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\usepackage{hyperref}
+
+\setlength{\droptitle}{-10em}   % This is your set screw
+
+\NewDocumentCommand{\evalat}{sO{\big}mm}{%
+	\IfBooleanTF{#1}
+	{\mleft. #3 \mright|_{#4}}
+	{#3#2|_{#4}}%
+}
+
+
+\DeclareMathOperator{\atantwo}{atan2}
+
+\titleformat{\section}{\normalfont\Large\bfseries}{Section \thesection.}{1em}{}
+\titleformat{\subsection}[runin]{\normalfont\bfseries}{}{0em}{}
+%\definecolor{shadecolor}{gray}{0.9}
+
+\title{Smart Products Lab 2}
+\author{Tyler Morrison}
+\date\today
+
+%\lstset{
+%	style              = Matlab-editor,
+%	basicstyle         = \mlttfamily,
+%	escapechar         = ",
+%	mlshowsectionrules = true,
+%	literate = {-}{-}1, % <hyphens will not show up unless you add this
+%}
+
+\lstset{language=C++,
+	basicstyle=\mlttfamily,
+	keywordstyle=\color{blue}\ttfamily,
+	stringstyle=\color{red}\ttfamily,
+	commentstyle=\color{green}\ttfamily,
+	morecomment=[l][\color{magenta}]{\#}
+}
+
+\renewcommand{\lstlistingname}{Program}% Listing -> Algorithm
+
+\begin{document}
+\maketitle
+\section{}
+\subsection{Data Structures}
+\subsection{Extra Functions}
+\subsection{Implementation of SPMath functions in SPmatrix}
+
+\section{}
+\subsection{Matrix inversion algorithm}
+\subsection{Technique name}
+Gaussian elimination because it as relatively low complexity with $\mathcal{O}(n^3)$.
+\subsection{Invertible check method}
+
+\section{}
+\subsection{What info do you think would have helped you to better complete the lab?}
+\subsection{Output from labone.cpp and labtwo.cpp}
+
+%\appendix
+%\section{Appendix of Programs}
+%{\fontencoding{T1}\selectfont\lstinputlisting[caption = {\href{run:./hw2.m}{Homework .m file}}]{./hw2.m}}
+\end{document}
