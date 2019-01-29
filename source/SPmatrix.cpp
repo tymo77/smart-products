@@ -67,7 +67,7 @@ namespace sp {
 
 			for (int i = 0; i < m.getNRows(); i++) {
 				for (int j = 0; j < m.getNCols(); j++) {
-					out << std::setw(10) << mat_data[i][j] << "\t";
+					out << std::setw(9) << std::setprecision(4) << mat_data[i][j] << " ";
 				}
 				out << "\n";
 			 }
