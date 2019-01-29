@@ -4,25 +4,25 @@
 namespace sp {
 
 	/*
-		simple initialize function
+		Initialize a vector.
 	*/
-	VecF_t initv(const unsigned int n, const float val)
-	{
+	VecF_t initv(const unsigned int n, const float val){
 		return VecF_t(n, val);
 	}
 
 	/*
 		Add two vectors, checking for correct dimensions.
 	*/
-	VecF_t addv(const VecF_t vec_a, const VecF_t vec_b)
-	{
+	VecF_t addv(const VecF_t vec_a, const VecF_t vec_b){
 
+		// Get and check sizes. Throw error for size mismatch.
 		unsigned int n_a = vec_a.size();
 		unsigned int n_b = vec_b.size() == n_a ? vec_b.size() : throw std::runtime_error("addv(): Cannot add vectors of different dimensions!");
+		
+		// New result vector.
 		VecF_t vec_c = sp::initv(n_b);
-		for (int i = 0; i < n_b; i++)
-		{
-			// adding vectors element by element
+		for (int i = 0; i < n_b; i++){
+			// Add one elment at a time.
 			vec_c[i] = vec_a[i] + vec_b[i];
 		}
 		return vec_c;
@@ -31,65 +31,68 @@ namespace sp {
 	/*
 		Subtract two vectors, checking for correct dimensions.
 	*/
-	VecF_t subv(const VecF_t vec_a, const VecF_t vec_b)
-	{
+	VecF_t subv(const VecF_t vec_a, const VecF_t vec_b){
+
+		// Get and check sizes. Throw error for size mismatch.
 		unsigned int n_a = vec_a.size();
 		unsigned int n_b = vec_b.size() == n_a ? vec_b.size() : throw std::runtime_error("subv(): Cannot add vectors of different dimensions!");
+		
+		// New result vector.
 		VecF_t vec_c = sp::initv(n_b);
-		for (int i = 0; i < n_b; i++)
-		{
-			// subtracting vectors element by element
+		for (int i = 0; i < n_b; i++){
+			// Add one elment at a time. (Faster than multiplying then adding with addv)
 			vec_c[i] = vec_a[i] - vec_b[i];
 		}
 		return vec_c;
 	}
 
 	/*
-	Dot product of two vectors, checking for correct dimensions.
+		Dot product of two vectors, checking for correct dimensions.
 	*/
-	float dotv(const VecF_t vec_a, const VecF_t vec_b)
-	{
+	float dotv(const VecF_t vec_a, const VecF_t vec_b){
+
+		// Get and check sizes. Throw error for size mismatch.
 		unsigned int n_a = vec_a.size();
 		unsigned int n_b = vec_b.size() == n_a ? vec_b.size() : throw std::runtime_error("dotv(): Cannot add vectors of different dimensions!");
 
+		// Initialize result.
 		float result = 0.0;
-		for (int i = 0; i < n_b; i++)
-		{
-			// multiplying and summing vectors element by element
+		for (int i = 0; i < n_b; i++){
+			// Multiplying and summing vectors element by element.
 			result += vec_a[i] * vec_b[i];
 		}
 		return result;
 	}
 
 	/*
-	Scalar product of two vectors, checking for correct dimensions.
+		Scalar product of two vectors, checking for correct dimensions.
 	*/
 	VecF_t multv(const VecF_t vec_a, const VecF_t vec_b){
+
+		// Get and check sizes. Throw error for size mismatch.
 		unsigned int n_a = vec_a.size();
 		unsigned int n_b = vec_b.size() == n_a ? vec_b.size() : throw std::runtime_error("multv(): Cannot add vectors of different dimensions!");
+		
+		// New result vector.
 		VecF_t vec_c = sp::initv(n_b);
-
-		for (int i = 0; i < n_b; i++)
-		{
-			// multiplying and summing vectors element by element
+		for (int i = 0; i < n_b; i++){
+			// Multiplying and summing vectors element by element.
 			vec_c[i] = vec_a[i] * vec_b[i];
 		}
 		return vec_c;
 	}
 
 	/*
-	simple initialize function
+		Matrix initialization function.
 	*/
-	MatF_t initm(const unsigned int n, const unsigned int m, const float val)
-	{
+	MatF_t initm(const unsigned int n, const unsigned int m, const float val){
 		return MatF_t(n, VecF_t(m, val));
 	}
 
 	/*
-	Initialize an identity matrix.
+		Initialize an identity matrix.
 	*/
-	MatF_t initIdent(const unsigned int n)
-	{
+	MatF_t initIdent(const unsigned int n){
 		MatF_t result = MatF_t(n, VecF_t(n, 0.0f));
 
 		for (int i = 0; i < n; i++) {
@@ -99,13 +102,15 @@ namespace sp {
 	}
 
 	/*
-	Compute deteriminant of a matrix.
+		Compute deteriminant of a matrix.
 	*/
 	float detm(MatF_t mat_a) {
+
 		float result = 1.0f;
+
+		// Check size. Throw error for non-square.
 		unsigned int m = mat_a.size();
 		unsigned int n = mat_a[0].size();
-
 		if (m != n){ throw std::runtime_error("detm(): Matrix must be square!"); }
 
 		// FORWARD ELIMINATION. Implemented from the algorithm on wikipedia XD
@@ -161,15 +166,12 @@ namespace sp {
 			result *= mat_a[i][i];
 		}
 
-		//std::cout << "Forward Eliminated Matrix: " << std::endl;
-		//sp::printm(mat_a);
-
 		return result;
 	}
 
 	/*
-Compute deteriminant of a matrix.
-*/
+		Compute rank of a matrix.
+	*/
 	int rankm(MatF_t mat_a) {
 		unsigned int m = mat_a.size();
 		unsigned int n = mat_a[0].size();
@@ -179,7 +181,7 @@ Compute deteriminant of a matrix.
 		int i_max;
 		float temp_comp1, temp_comp2, f;
 		int rank = std::max(m,n);
-		//std::cout << "Max rank: "<< rank << std::endl;
+
 		while (h < m && k < n) {
 
 			// Find the pivot in the k-th column.
@@ -223,63 +225,58 @@ Compute deteriminant of a matrix.
 			}
 		}
 
+		// Count empty rows to determine rank.
 		for (int i = 0; i < n; i++) {
 			auto min_max = std::minmax_element(mat_a[i].begin(), mat_a[i].end());
 			if (*min_max.first == 0.0f && *min_max.second == 0.0f) { 
 				rank--;
-				//std::cout << "empty row" << std::endl;
 			}
 		}
-
-		//std::cout << "Forward Eliminated Matrix: " << std::endl;
-		//sp::printm(mat_a);
 
 		return rank;
 	}
 
 	/*
-	transpose matrix
+		Transpose matrix by copy.
 	*/
-	MatF_t transposem(MatF_t mat_a)
-	{
+	MatF_t transposem(MatF_t mat_a){
+		transposemRef(mat_a);
+		return mat_a;
+	}
+
+	/*
+		Transpose matrix by reference.
+	*/
+	void transposemRef(MatF_t& mat_a) {
 		unsigned int rows = mat_a.size();
 		unsigned int cols = mat_a[0].size();
 		bool is_square = cols == rows ? true : false;
 		bool is_fat = cols > rows ? true : false;
-		if (is_fat)
-		{
+		if (is_fat) {
 			mat_a.resize(cols, VecF_t((is_fat ? rows : cols), 0.0));
 		}
-		for (int i = 0; i < (is_fat ? rows : cols); i++)
-		{
-			if (!is_fat & !is_square)
-			{
+		for (int i = 0; i < (is_fat ? rows : cols); i++) {
+			if (!is_fat & !is_square) {
 				mat_a[i].resize(rows, 0.0);
 			}
-			for (int j = i + 1; j < (is_fat ? cols : rows); j++)
-			{
+			for (int j = i + 1; j < (is_fat ? cols : rows); j++) {
 				float temp_ij = mat_a[i][j];
 				mat_a[i][j] = mat_a[j][i];
 				mat_a[j][i] = temp_ij;
 			}
 		}
-		if (!is_fat & !is_square)
-		{
+		if (!is_fat & !is_square) {
 			mat_a.resize(cols);
 		}
-		else
-		{
-			for (int i = 0; i<rows; i++)
-			{
+		else {
+			for (int i = 0; i < rows; i++) {
 				mat_a[i].resize(rows);
 			}
 		}
-
-		return mat_a;
 	}
 
 	/*
-	Swap two rows in a matrix.
+		Swap two rows in a matrix.
 	*/
 	void swapRows(MatF_t & mat_a, const int n1, const int n2) {
 		VecF_t temp = mat_a[n1];
@@ -288,7 +285,7 @@ Compute deteriminant of a matrix.
 	}
 
 	/*
-	Get reduced row echelon form of a matrix.
+		Get reduced row echelon form of a matrix.
 	*/
 	void rref(MatF_t & mat_a){
 		unsigned int m = mat_a.size();
@@ -363,11 +360,8 @@ Compute deteriminant of a matrix.
 					}
 				}
 				k = 0; h = h - 1;
-				//printm(mat_a);
-				//printf("(%d, %d)\n", h, k);
 			}
 			else {
-				//printf(" is a zero.\n");
 				// The current element is a zero
 				// Keep checking to the right.
 				k = k + 1;
@@ -378,10 +372,17 @@ Compute deteriminant of a matrix.
 	}
 
 	/*
-	Invert a matrix.
+		Invert a matrix by copy.
 	*/
-	MatF_t invertm(MatF_t mat_a)
-	{
+	MatF_t invertm(MatF_t mat_a){
+		invertmRef(mat_a);
+		return mat_a;
+	}
+
+	/*
+		Invert a matrix by reference.
+	*/
+	void invertmRef(MatF_t& mat_a){
 		unsigned int rows = mat_a.size();
 		unsigned int cols = mat_a[0].size();
 		if (rows != cols) {
@@ -390,7 +391,7 @@ Compute deteriminant of a matrix.
 		int N = rows;
 
 		// Resize matrix to twice to width.
-		resizem(&mat_a, N, 2*N);
+		resizem(&mat_a, N, 2 * N);
 
 		// Add ones on diagonal of new section.
 		for (int i = 0; i < N; i++) {
@@ -408,11 +409,10 @@ Compute deteriminant of a matrix.
 				mat_b[i][j] = mat_a[i][j + N];
 			}
 		}
-		return mat_b;
 	}
 
 	/*
-	Adjust matrix size. If expanding, uses 0.0 as default.
+		Adjust matrix size. If expanding, uses 0.0 as default.
 	*/
 	void resizem(MatF_t * p_mat, const unsigned int n_new, const unsigned int m_new)
 	{
@@ -427,7 +427,7 @@ Compute deteriminant of a matrix.
 	}
 
 	/*
-	Print out the matrix.
+		Print out the matrix.
 	*/
 	void printm(const MatF_t & mat_a)
 	{
@@ -443,7 +443,7 @@ Compute deteriminant of a matrix.
 	}
 
 	/*
-	Add two matrices, checking for correct dimensions... to do in class.
+		Add two matrices, checking for correct dimensions.
 	*/
 	MatF_t addm(const MatF_t mat_a, const MatF_t mat_b){
 
@@ -458,6 +458,7 @@ Compute deteriminant of a matrix.
 			throw std::runtime_error("addm(): Cannot add matrices of different dimensions!");
 		}
 
+		// Add as vectors.
 		MatF_t result;
 		result = initm(a_Nrows, a_Ncols, 0.0);
 		for ( int i = 0; i < a_Nrows; i++ ){
@@ -467,7 +468,7 @@ Compute deteriminant of a matrix.
 	}
 
 	/*
-	Subctract two matrices, checking for correct dimensions... to do in class.
+		Subctract two matrices.
 	*/
 	MatF_t subm(const MatF_t mat_a, const MatF_t mat_b) {
 
@@ -482,6 +483,7 @@ Compute deteriminant of a matrix.
 			throw std::runtime_error("addm(): Cannot add matrices of different dimensions!");
 		}
 
+		// Subtract as vectors.
 		MatF_t result;
 		result = initm(a_Nrows, a_Ncols, 0.0);
 		for (int i = 0; i < a_Nrows; i++) {
@@ -491,9 +493,10 @@ Compute deteriminant of a matrix.
 	}
 
 	/*
-	Multiply two matrices, checking for correct dimensions.
+		Multiply two matrices, checking for correct dimensions.
 	*/
 	MatF_t multm(MatF_t mat_a, MatF_t mat_b){
+		
 		// Get sizes from matrices.
 		unsigned int a_Nrows = mat_a.size();
 		unsigned int b_Nrows = mat_b.size();
@@ -506,6 +509,7 @@ Compute deteriminant of a matrix.
 			throw std::runtime_error("multm(): Cannot multiply without matching dimensions!");
 		}
 
+		// Multiply using dot as vectors.
 		MatF_t result;
 		result = initm(a_Nrows, b_Nrows, 0.0);
 		for ( int i = 0; i < a_Nrows; i++ ){
