@@ -409,13 +409,9 @@ namespace sp {
 			}
 		}
 
-		// Get the right side of the matrix.
-		MatF_t mat_b;
-		mat_b = initm(N, N, 0.0);
+		// Erase the left side now.
 		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < N; j++) {
-				mat_b[i][j] = mat_a[i][j + N];
-			}
+			mat_a[i].erase(mat_a[i].begin(), mat_a[i].begin() + N);
 		}
 	}
 
