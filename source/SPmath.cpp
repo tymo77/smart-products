@@ -284,9 +284,9 @@ namespace sp {
 	}
 
 	/*
-		Get reduced row echelon form of a matrix.
+		Get forward elimination.
 	*/
-	void rref(MatF_t & mat_a){
+	void fwdElim(MatF_t & mat_a) {
 		unsigned int m = mat_a.size();
 		unsigned int n = mat_a[0].size();
 		// FORWARD ELIMINATION. Implemented from the algorithm on wikipedia XD
@@ -331,7 +331,18 @@ namespace sp {
 				k = k + 1;
 			}
 		}
+	}
+	/*
+		Do backward elimination.
+	*/
+	void bckElim(MatF_t & mat_a) {
 
+		unsigned int m = mat_a.size();
+		unsigned int n = mat_a[0].size();
+		// FORWARD ELIMINATION. Implemented from the algorithm on wikipedia XD
+		int h = 0;
+		int k = 0;
+		float f;
 
 		// BACKWARD ELIMINATION.
 		// Start in the bottom left. Search right for a pivot. Then move up row by row.
@@ -371,6 +382,13 @@ namespace sp {
 			}
 		}
 	}
+	/*
+		Get reducted-row echelon form.
+	*/
+	void rref(MatF_t& mat_a) {
+		fwdElim(mat_a);
+		bckElim(mat_a);
+	}
 
 	/*
 		Invert a matrix by copy.
@@ -399,8 +417,8 @@ namespace sp {
 			mat_a[i][i + N] = 1.0;
 		}
 
-		// Get reduced-row echelon form of the new matrix.
-		rref(mat_a);
+		// Get forward eliminated upper-triangular form.
+		fwdElim(mat_a);
 
 		// If there is a zero-diagonal on the left side, throw matrix is not invertible.
 		for (int i = 0; i < N; i++) {
@@ -408,6 +426,9 @@ namespace sp {
 				throw std::runtime_error("invertm(): mat_a is not invertible");
 			}
 		}
+
+		// Finish with backward elimination
+		bckElim(mat_a);
 
 		// Erase the left side now.
 		for (int i = 0; i < N; i++) {

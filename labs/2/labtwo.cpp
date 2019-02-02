@@ -3,9 +3,9 @@
 #include<vector>
 #include"../../include/SPmath.h"
 #include"../../include/SPmatrix.h"
+#include<exception>
 
-int main()
-{
+int main(){	
 	sp::MatF_t data = { { 5.0f, 3.3f, 2.34f },{ 6.7f, 7.32f, 9.3f },{ 8.123f, 7.345f, 22.34f } };
 	sp::MatF A(data);
 	std::cout << "Matrix A = " << std::endl << A << std::endl;

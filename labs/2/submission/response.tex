@@ -84,6 +84,8 @@ Vectors are formed as vectors of floats using the STL container \texttt{vector<i
 	\item \texttt{MatF_t initIdent(const unsigned int)}: Initialize an identity matrix.
 	\item \texttt{void swapRows(MatF_t\&, const int, const int)}: Swap two rows of a matrix.
 	\item \texttt{float detm(const MatF_t)}: Compute determinant of a matrix. (Gauss-based)
+	\item \texttt{void fwdElim(MatF_t\&)}: Conduct forward elimination on matrix. (Gauss-based)
+	\item \texttt{void bckWlim(MatF_t\&)}: Conduct backward elimination on matrix. (Gauss-based)
 	\item \texttt{void rref(MatF_t\&)}: Get reduced row-echelon form of matrix. (Gauss-based)
 	\item \texttt{int rankm(const MatF_t)}: Get rank of a matrix. (Gauss-based)
 %	\item \texttt{}:
@@ -104,9 +106,9 @@ MatF MatF::inv() {
 \subsection{Matrix inversion algorithm}
 To do matrix inversion, I used the forward elimination algorithm from  \href{https://en.wikipedia.org/wiki/Gaussian_elimination#Pseudocode}{Wikipedia: Gaussian elimination}, and completed the backward elimination myself.
 \subsection{Technique name}
-An algorithm for Gaussian-Jordan elimination with pivots selected for largest magnitude is used because it has relatively low complexity with $\mathcal{O}(n^3)$ and good numerical stability for poorly conditioned matrices.
+An algorithm for Gauss-Jordan elimination with pivots selected by numerical magnitude was used because it has relatively low complexity compared to other methods ($\mathcal{O}(n^3)$) and good numerical stability for poorly conditioned matrices.
 \subsection{Invertible check method}
-A check was added to invertm() to determine if, after Gauss-Jordan elimination, the left hand side of the composite matrix has any zeros in the diagonal.
+A check was added to invertm() to determine if, after forward elimination, the left hand side of the composite matrix has any zeros in the diagonal.
 
 This is, of course, a tad inefficient, as it adds overhead to cases where the matrix is non invertible, but in those cases, performance is usually not the limiting issue. IMHO it is better to limit the peformance of the non-invertible cases with a post-hoc test than hurt the invertible cases with a costly check before calling or increase complexity by restructuring the library to include a test partway through inversion (which would be optimal.) \href{https://github.com/tymo77/smart-products/commit/499b9f5e1da824d2720f8168dcaf1bd210213484}{\texttt{Commit\# 499b9f5e1}}
 
@@ -128,7 +130,7 @@ Included below are the outputs of the compiled programs.
 	stepnumber=1,
 	frame=single
 }
-\lstinputlisting[caption = {Output of labtwo.cpp}]{../../1/win/main.log}
+\lstinputlisting[caption = {Output of labone.cpp}]{../../1/win/main.log}
 \lstinputlisting[caption = {Output of labtwo.cpp}]{../win/main.log}
 %\appendix
 %\section{Appendix of Programs}

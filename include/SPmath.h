@@ -38,6 +38,8 @@ namespace sp {
 	void swapRows(MatF_t&, const int, const int);
 	float detm(const MatF_t);
 	void rref(MatF_t&);
+	void bckElim(MatF_t&);
+	void fwdElim(MatF_t&);
 	int rankm(const MatF_t);
 
 	// Non-mathematical matrix operations.
