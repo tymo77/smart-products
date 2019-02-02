@@ -32,13 +32,6 @@
 
 \setlength{\droptitle}{-10em}   % This is your set screw
 
-\NewDocumentCommand{\evalat}{sO{\big}mm}{%
-	\IfBooleanTF{#1}
-	{\mleft. #3 \mright|_{#4}}
-	{#3#2|_{#4}}%
-}
-
-
 \DeclareMathOperator{\atantwo}{atan2}
 
 \titleformat{\section}{\normalfont\Large\bfseries}{Section \thesection.}{1em}{}
@@ -85,15 +78,13 @@ Vectors are formed as vectors of floats using the STL container \texttt{vector<i
 	\item \texttt{void swapRows(MatF_t\&, const int, const int)}: Swap two rows of a matrix.
 	\item \texttt{float detm(const MatF_t)}: Compute determinant of a matrix. (Gauss-based)
 	\item \texttt{void fwdElim(MatF_t\&)}: Conduct forward elimination on matrix. (Gauss-based)
-	\item \texttt{void bckWlim(MatF_t\&)}: Conduct backward elimination on matrix. (Gauss-based)
+	\item \texttt{void bckElim(MatF_t\&)}: Conduct backward elimination on matrix. (Gauss-based)
 	\item \texttt{void rref(MatF_t\&)}: Get reduced row-echelon form of matrix. (Gauss-based)
 	\item \texttt{int rankm(const MatF_t)}: Get rank of a matrix. (Gauss-based)
-%	\item \texttt{}:
 \end{itemize}
 
 \subsection{Implementation of SPMath functions in SPmatrix}
 The matrix class in \texttt{SPmatrix} calls functions from \texttt{SPmath} whenever it can so that functions are not redefined. For example:
-
 
 \begin{lstlisting}
 MatF MatF::inv() {
@@ -110,14 +101,14 @@ An algorithm for Gauss-Jordan elimination with pivots selected by numerical magn
 \subsection{Invertible check method}
 A check was added to invertm() to determine if, after forward elimination, the left hand side of the composite matrix has any zeros in the diagonal.
 
-This is, of course, a tad inefficient, as it adds overhead to cases where the matrix is non invertible, but in those cases, performance is usually not the limiting issue. IMHO it is better to limit the peformance of the non-invertible cases with a post-hoc test than hurt the invertible cases with a costly check before calling or increase complexity by restructuring the library to include a test partway through inversion (which would be optimal.) \href{https://github.com/tymo77/smart-products/commit/499b9f5e1da824d2720f8168dcaf1bd210213484}{\texttt{Commit\# 499b9f5e1}}
+If there are zeros, it throws a runtime error for a non-invertible matrix, otherwise it continues onto backward elimination.
 
 \section{}
 \subsection{What info do you think would have helped you to better complete the lab?}
-Nothing that I can think of right now.
+Nothing that I can think of right now. The suggestion to practice on HackerRank helped me get a handle on C++.
 
 \subsection{Output from labone.cpp and labtwo.cpp}
-Included below are the outputs of the compiled programs.
+Included below are the outputs of the compiled programs as they were piped out of the command line.
 
 \lstset{
 	language={},

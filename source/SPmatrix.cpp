@@ -14,7 +14,7 @@ namespace sp {
 			mat_data_ = initm(n_rows, n_cols, f); 
 		}
 
-		// Copy
+		// Copy from matrix
 		MatF::MatF(const MatF_t m) {
 			init_ = true;
 			mat_data_ = m;
