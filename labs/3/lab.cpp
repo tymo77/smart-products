@@ -3,7 +3,7 @@
 #include<vector>
 #include"../../include/SPmath.h"
 #include"../../include/SPmatrix.h"
-#include"../../include/SPGPIO.h"
+#include"../../include/mySPGPIO.h"
 #include<exception>
 #include<thread>
 #include<chrono>

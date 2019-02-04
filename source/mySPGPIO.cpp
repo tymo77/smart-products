@@ -1,4 +1,4 @@
-#include "../include/mySPGIO.h"
+#include "../include/mySPGPIO.h"
 
 namespace sp {
 	uint32_t MyGPIO::readRegBits(void* ptr) {
@@ -92,7 +92,7 @@ namespace sp {
 		return static_cast<int>(pinmode_now);
 	}
 
-	int MyGPIO::pinMode(int pin_number, PinModes p_mode) override {
+	int MyGPIO::pinMode(int pin_number, PinModes p_mode) {
 		// pin_number -> pin we want to set.
 		// p_mode -> the mode we want to set this pin to.
 		// sets pin_number to p_mode
@@ -127,7 +127,7 @@ namespace sp {
 		return 1;//Return 1 if mode didn't fail.
 	}
 
-	int MyGPIO::digitalRead(int pin_number) override {
+	int MyGPIO::digitalRead(int pin_number) {
 
 		// Get pointer to memory register.
 		void* pin_ptr = getPtr(getPinReadReg(pin_number));
@@ -143,7 +143,7 @@ namespace sp {
 		return static_cast<int>(result);
 	}
 
-	int MyGPIO::digitalWrite(int pin_number, DigitalOut out_value) override {
+	int MyGPIO::digitalWrite(int pin_number, DigitalOut out_value) {
 
 		// Get pointer to memory register.
 		void* pin_ptr;

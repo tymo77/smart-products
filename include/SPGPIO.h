@@ -149,6 +149,7 @@ namespace sp {
 			if (mMemFD<0) throw std::runtime_error("Cannot open memory device: try using sudo to run your program");
 			setPtr(mmap(NULL, mRPiSettings.MemMapSize, (PROT_READ | PROT_WRITE), MAP_SHARED, mMemFD, gpio_base_address));//memory is mapped and a pointer is returned
 			std::cout << "pointer is 0x" << (reinterpret_cast<std::uint32_t>(getPtr())) << std::endl;
+			std::cout << std::setbase(10);
 		}
 
 		~GPIO()

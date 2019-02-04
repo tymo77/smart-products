@@ -43,6 +43,8 @@ namespace sp {
 		int digitalWrite(int, DigitalOut) override;
 
 		PinSettings getPinSettings(int);
+		
+		PinSettings updatePinSettings(int);
 
 		void showPins();
 
