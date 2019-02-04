@@ -45,7 +45,7 @@
 \titleformat{\subsection}[runin]{\normalfont\bfseries}{\alph{subsection})}{1em}{}
 %\definecolor{shadecolor}{gray}{0.9}
 
-\title{Smart Products Lab 1 \& 2}
+\title{Smart Products Lab 3}
 \author{Tyler Morrison}
 \date\today
 
@@ -74,63 +74,67 @@
 \begin{document}
 \maketitle
 \section{}
-\subsection{Data Structures}
-Vectors are formed as vectors of floats using the STL container \texttt{vector<int>}. Matrices are vectors of vectors (i.e: \texttt{vector<vector<int>>}).
-
-\subsection{Extra Functions}
-
+\subsection{Algorithms for manipulating, reading and writing to registers.}
 \begin{itemize}
-	\item \texttt{float dotv(const VecF_t, const VecF_t)}: Dot product of two vectors.
-	\item \texttt{MatF_t initIdent(const unsigned int)}: Initialize an identity matrix.
-	\item \texttt{void swapRows(MatF_t\&, const int, const int)}: Swap two rows of a matrix.
-	\item \texttt{float detm(const MatF_t)}: Compute determinant of a matrix. (Gauss-based)
-	\item \texttt{void rref(MatF_t\&)}: Get reduced row-echelon form of matrix. (Gauss-based)
-	\item \texttt{int rankm(const MatF_t)}: Get rank of a matrix. (Gauss-based)
-%	\item \texttt{}:
+	\item \texttt{int pinMode(int pin_number, PinModes p_mode) override:}
+		\begin{enumerate}
+			\item use \texttt{getPtr} to get the memory register needed to write the pin mode.
+			\item use \texttt{readRegBits} to get the current register state.
+			\item cast the pin mode integer to the associated (binary) register state.
+			\item bit shift the desired register state over to the correct registers based on the pin number.
+			\item bit shift a mask of zeros to the target registers.
+			\item get the new state of the register by ANDing the mask and the old pin state and ORing that with the desired register changes.
+			\item use \texttt{setRegBits} to write the new desired state to the target register.
+		\end{enumerate}
+	\item \texttt{int digitalRead(int pin_number) override:}
+		\begin{enumerate}
+			\item use \texttt{getPtr} to get the memory register needed to write the pin mode.
+			\item use \texttt{readRegBits} to get the current register state.
+			\item bit shift the single-bit mask over to the target bit in the register. 
+			\item AND the mask with the current regsiter state and shift the pin to the front of the register.
+			\item convert the register binary to an \texttt{int} and return it.
+		\end{enumerate}
+	\item \texttt{int digitalWrite(int pin_number, DigitalOut out_value) override:}
+		\begin{enumerate}
+			\item use \texttt{getPtr} to get the memory register needed to write the pin mode.
+			\item use \texttt{readRegBits} to get the current register state.
+			\item bit shift a 1 over to the target bit in the register. 
+			\item bit shift a single bit mask to the target bit in the register.
+			\item AND the mask with the current register state and OR that with the desired desired output bit.
+			\item use \texttt{setRegBits} to write the new desired state to the target register. 
+		\end{enumerate}
 \end{itemize}
 
-\subsection{Implementation of SPMath functions in SPmatrix}
-The matrix class in \texttt{SPmatrix} calls functions from \texttt{SPmath} whenever it can so that functions are not redefined. For example:
+\subsection{Efficiency considerations}
+I don't know that I did much to improve efficiency other than write good code. In the future, I guess one could load in all the pin settings in a cache during the class constructor so as to avoid having to figure out which register to use everytime one reads or writes to a pin.
 
+\subsection{Extra functions}
+\begin{itemize}
+	\item \texttt{uint32_t readRegBits(void*): read the bits in a register from the pointer.}
+	\item \texttt{int setRegBits(void*, uint32_t): write the bits in a register given by the pointer.}
+	\item \texttt{GPIOregisters getPinModeReg(int): return the GPIOregisters enum object that corresponds to the register for setting the pin mode of the provided pin number.}
+	\item \texttt{GPIOregisters getPinReadReg(int): return the GPIOregisters enum object that corresponds to the register for reading the pin state of the provided pin number.}
+	\item \texttt{GPIOregisters getPinHighReg(int): return the GPIOregisters enum object that corresponds to the register for setting the pin state high for the provided pin number.}
+	\item \texttt{GPIOregisters getPinLowReg(int): return the GPIOregisters enum object that corresponds to the register for setting the pin state low for the provided pin number.}
+	\item \texttt{int readPinMode(int): read the pinmode of a pin number}
+	\item \texttt{PinSettings updatePinSettings(int): update only the pin settings of a pin that can change, i.e: the state and mode.}
+	\item \texttt{void showPins(): print all the pins to the screen.}
+	\item \texttt{void showPins(const std::vector<int> \&): print the selected pins to the screen.}
+\end{itemize}
 
-\begin{lstlisting}
-MatF MatF::inv() {
-	MatF B(invertm(mat_data_));
-	return B;
-}
-\end{lstlisting}
+\subsection{Bitwise operators}
+Bitshifts were used to shift desired outputs and masks over to the correct bits in the register. Bit-wise AND's and OR's were used with bitmasks to change single bits in the register without affecting bits other than the targets.
+
+\subsection{Error checking}
+The main error checking I did was check for and throw errors for pin numbers that were outside of the allowed range.
 
 \section{}
-\subsection{Matrix inversion algorithm}
-To do matrix inversion, I used the forward elimination algorithm from  \href{https://en.wikipedia.org/wiki/Gaussian_elimination#Pseudocode}{Wikipedia: Gaussian elimination}, and completed the backward elimination myself.
-\subsection{Technique name}
-An algorithm for Gaussian-Jordan elimination with pivots selected for largest magnitude is used because it has relatively low complexity with $\mathcal{O}(n^3)$ and good numerical stability for poorly conditioned matrices.
-\subsection{Invertible check method}
-A check was added to invertm() to determine if, after Gauss-Jordan elimination, the left hand side of the composite matrix has any zeros in the diagonal.
+\subsection{What information would have helped me better understand the lab?}
+I am still a little bit confused on the behavior of my Pi when using the memory mapping to change GPIO pin states. It doesn't always seem to work as I expect, as sometimes changing one pin state changes others as well. I have scoured my code for a but but I can't seem to find any. 
 
-This is, of course, a tad inefficient, as it adds overhead to cases where the matrix is non invertible, but in those cases, performance is usually not the limiting issue. IMHO it is better to limit the peformance of the non-invertible cases with a post-hoc test than hurt the invertible cases with a costly check before calling or increase complexity by restructuring the library to include a test partway through inversion (which would be optimal.) \href{https://github.com/tymo77/smart-products/commit/499b9f5e1da824d2720f8168dcaf1bd210213484}{\texttt{Commit\# 499b9f5e1}}
+I'd like to know a little bit more about memory mapping but I can look that up on my own too.
+\subsection{Outputs}
 
-\section{}
-\subsection{What info do you think would have helped you to better complete the lab?}
-Nothing that I can think of right now.
+%\lstinputlisting[caption = {Output of labthree.cpp}]{../win/main.log}
 
-\subsection{Output from labone.cpp and labtwo.cpp}
-Included below are the outputs of the compiled programs.
-
-\lstset{
-	language={},
-	basicstyle=\ttfamily,
-	keywordstyle=\color{blue}\ttfamily,
-	stringstyle=\color{red}\ttfamily,
-	commentstyle=\color{green}\ttfamily,
-	morecomment=[l][\color{magenta}]{\#},
-	numbers=left,
-	stepnumber=1,
-	frame=single
-}
-\lstinputlisting[caption = {Output of labtwo.cpp}]{../../1/win/main.log}
-\lstinputlisting[caption = {Output of labtwo.cpp}]{../win/main.log}
-%\appendix
-%\section{Appendix of Programs}
-%{\fontencoding{T1}\selectfont\lstinputlisting[caption = {\href{run:./hw2.m}{Homework .m file}}]{./hw2.m}}
 \end{document}
