@@ -25,8 +25,7 @@
 \usepackage{amsmath,mleftright}
 \usepackage{xparse}
 \usepackage{titling}
-\usepackage{caption}
-\usepackage{subcaption}
+\usepackage{tabularx}
 
 \usepackage{hyperref}
 
@@ -42,7 +41,7 @@
 \DeclareMathOperator{\atantwo}{atan2}
 
 \titleformat{\section}{\normalfont\Large\bfseries}{Section \thesection.}{1em}{}
-\titleformat{\subsection}[runin]{\normalfont\bfseries}{\alph{subsection})}{1em}{}
+\titleformat{\subsection}{\normalfont\bfseries}{\alph{subsection})}{1em}{}
 %\definecolor{shadecolor}{gray}{0.9}
 
 \title{Smart Products Lab 3}
@@ -106,35 +105,49 @@
 \end{itemize}
 
 \subsection{Efficiency considerations}
-I don't know that I did much to improve efficiency other than write good code. In the future, I guess one could load in all the pin settings in a cache during the class constructor so as to avoid having to figure out which register to use everytime one reads or writes to a pin.
+In order to improve efficiency, I used static arrays to get the registers and shifts for each pin for read, write high, write low, and pin mode. This might use a little bit more memory but it precludes a bunch of logic and modular arithmetic that might otherwise be used to determine them at runtime each time you need to operate on a pin. 
 
-\subsection{Extra functions}
-\begin{itemize}
-	\item \texttt{uint32_t readRegBits(void*): read the bits in a register from the pointer.}
-	\item \texttt{int setRegBits(void*, uint32_t): write the bits in a register given by the pointer.}
-	\item \texttt{GPIOregisters getPinModeReg(int): return the GPIOregisters enum object that corresponds to the register for setting the pin mode of the provided pin number.}
-	\item \texttt{GPIOregisters getPinReadReg(int): return the GPIOregisters enum object that corresponds to the register for reading the pin state of the provided pin number.}
-	\item \texttt{GPIOregisters getPinHighReg(int): return the GPIOregisters enum object that corresponds to the register for setting the pin state high for the provided pin number.}
-	\item \texttt{GPIOregisters getPinLowReg(int): return the GPIOregisters enum object that corresponds to the register for setting the pin state low for the provided pin number.}
-	\item \texttt{int readPinMode(int): read the pinmode of a pin number}
-	\item \texttt{PinSettings updatePinSettings(int): update only the pin settings of a pin that can change, i.e: the state and mode.}
-	\item \texttt{void showPins(): print all the pins to the screen.}
-	\item \texttt{void showPins(const std::vector<int> \&): print the selected pins to the screen.}
-\end{itemize}
+\subsection{Extra functions}%
+\begin{tabularx}{\linewidth}{lX}
+	\texttt{uint32_t readRegBits(void*):}
+	& Read the bits in a register from the pointer.\\[1em]
+	\texttt{int setRegBits(void*, uint32_t):}
+	& Write the bits in a register given by the pointer.\\[1em]
+	\texttt{int readPinMode(int):}
+	& Read the pinmode of a pin number\\[1em]
+	\texttt{void updatePinSettings(int, PinSettings \&):}
+	& Update only the pin settings of a pin that can change, i.e: the state and mode.\\[2em]
+	\texttt{void showPins():}
+	& Print all the pins to the screen.\\[1em]
+	\texttt{void showPins(const std::vector<int> \&):}
+	& Print the selected pins to the screen.\\[1em]
+	\texttt{void main:}
+	& I added the ability to accept an optional pin number argument to my main function. This helped me test a bunch of pins on my Pi with LEDs without recompiling.\\[1em]
+\end{tabularx}
 
 \subsection{Bitwise operators}
 Bitshifts were used to shift desired outputs and masks over to the correct bits in the register. Bit-wise AND's and OR's were used with bitmasks to change single bits in the register without affecting bits other than the targets.
 
 \subsection{Error checking}
-The main error checking I did was check for and throw errors for pin numbers that were outside of the allowed range.
+The main error checking I did was check for and throw errors for pin numbers that were outside of the allowed range. When writing to a pin, I also first check if it is set to write mode. For both of these common errors, the behavior is to return from the function with a flag: \texttt{-1}.
 
 \section{}
 \subsection{What information would have helped me better understand the lab?}
-I am still a little bit confused on the behavior of my Pi when using the memory mapping to change GPIO pin states. It doesn't always seem to work as I expect, as sometimes changing one pin state changes others as well. I have scoured my code for a but but I can't seem to find any. 
+I'd like to know a little bit more about memory mapping and the exact mechanics of how that works in this lab, but that's all I can think of.
 
-I'd like to know a little bit more about memory mapping but I can look that up on my own too.
-\subsection{Outputs}
+\subsection{Output}
+\lstset{
+	language={},
+	basicstyle=\ttfamily,
+	keywordstyle=\color{blue}\ttfamily,
+	stringstyle=\color{red}\ttfamily,
+	commentstyle=\color{green}\ttfamily,
+	morecomment=[l][\color{magenta}]{\#},
+	numbers=left,
+	stepnumber=1,
+	frame=single
+}
 
-%\lstinputlisting[caption = {Output of labthree.cpp}]{../win/main.log}
+\lstinputlisting[caption = {Output of labthree.cpp}]{../lin/main.sol}
 
 \end{document}
