@@ -142,18 +142,17 @@ namespace sp {
 	//~ }
 
 	int MyGPIO::readPinMode(int pin_number) {
+		if (pin_number < 0 || pin_number > 54){
+			std::cout << "readPinMode() failed. Bad pin\n";
+			return -1;			
+		}
 		void* pin_ptr = getPtr(FUNC_SEL_REG[pin_number]);
 		uint32_t pinmode_now = readRegBits(pin_ptr);
-		int pin_number_shift = FUNC_SEL_SHIFT[pin_number];
-		pinmode_now = (pinmode_now >> pin_number_shift) & (0x7);
-
+		pinmode_now = (pinmode_now >> FUNC_SEL_SHIFT[pin_number]) & (0x7);
 		return static_cast<int>(pinmode_now);
 	}
 
 	int MyGPIO::pinMode(int pin_number, PinModes p_mode) {
-		// pin_number -> pin we want to set.
-		// p_mode -> the mode we want to set this pin to.
-		// sets pin_number to p_mode
 		
 		if (pin_number < 0 || pin_number > 54){
 			std::cout << "pinMode() failed. Bad pin\n";
@@ -170,7 +169,6 @@ namespace sp {
 		uint32_t p_mode_code = static_cast<std::uint32_t>(p_mode);
 
 		// Shift the target pin over to the correct bits in target register.
-		//int pin_number_shift = (pin_number % 10) * 3;
 		int pin_number_shift = FUNC_SEL_SHIFT[pin_number];
 		uint32_t des_output = p_mode_code << pin_number_shift;
 
@@ -230,8 +228,7 @@ namespace sp {
 		uint32_t pinmode_now = readRegBits(pin_ptr);
 
 		// Shift the target pin over to the correct bits in target register.
-		int pin_number_shift = RW_SHIFT[pin_number];
-		uint32_t des_output = (0x1 << pin_number_shift);
+		uint32_t des_output = (0x1 << RW_SHIFT[pin_number]);
 
 		// Set target register.
 		setRegBits(pin_ptr, des_output);
@@ -252,13 +249,11 @@ namespace sp {
 		return pinSet;
 	}
 
-	GPIO::PinSettings MyGPIO::updatePinSettings(int pin_number) {
-
-		GPIO::PinSettings pinSet;
+	void MyGPIO::updatePinSettings(int pin_number, GPIO::PinSettings& pinSet) {
 
 		pinSet.PinLevel = digitalRead(pin_number);
 		pinSet.PinMode = readPinMode(pin_number);
-		return pinSet;
+
 	}
 
 	void MyGPIO::showPins() {

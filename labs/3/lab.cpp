@@ -1,15 +1,15 @@
-#include<iostream>
-#include<stdlib.h>
-#include<vector>
-#include"../../include/SPmath.h"
-#include"../../include/SPmatrix.h"
-#include"../../include/mySPGPIO.h"
-#include<exception>
-#include<bitset>
-#include<iomanip>
-#include<vector>
-#include<stdio.h>
-#include<unistd.h>
+#include <iostream>
+#include <stdlib.h>
+#include <vector>
+#include "../../include/SPmath.h"
+#include "../../include/SPmatrix.h"
+#include "../../include/mySPGPIO.h"
+#include <exception>
+#include <bitset>
+#include <iomanip>
+#include <vector>
+#include <stdio.h>
+#include <unistd.h>
 
 int main(int argc, char* argv[]) {
 
@@ -41,19 +41,19 @@ int main(int argc, char* argv[]) {
 	}
 
 
-	gpio.showPins();
+	//gpio.showPins();
 	std::cout << "Toggling Pin Mode ..." << std::endl;
 	gpio.pinMode(pin_num, sp::GPIO::PinModes::INPUT);
-	gpio.showPins();
+	//gpio.showPins();
 	gpio.pinMode(pin_num, sp::GPIO::PinModes::OUTPUT);// set the pin mode
 	std::cout << "toggle complete" << std::endl;
-	gpio.showPins();
+	//gpio.showPins();
 
 	std::cout << "Writing Low : " << std::endl;
 	gpio.digitalWrite(pin_num, sp::GPIO::DigitalOut::LOW); // set the pin to low
 	int pin_val = gpio.digitalRead(pin_num); // read the value of the pin
 	std::cout << "Value of pin " << pin_num << " is " << pin_val << std::endl;
-	gpio.showPins();
+	//gpio.showPins();
 
 	sleep(1);
 
@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
 	gpio.digitalWrite(pin_num, sp::GPIO::DigitalOut::HIGH); //write high to pin
 	pin_val = gpio.digitalRead(pin_num);// read the pin
 	std::cout << "Value of pin " << pin_num << " is " << pin_val << std::endl;
-	gpio.showPins();
+	//gpio.showPins();
 
 	return 0;
 }

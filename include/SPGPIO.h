@@ -1,5 +1,5 @@
-#ifndef SMART_PRODUCTS_GPIO_H
-#define SMART_PRODUCTS_GPIO_H
+#ifndef SMART_PRODUCTS_SPGPIO_H
+#define SMART_PRODUCTS_SPGPIO_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -143,13 +143,13 @@ namespace sp {
 		GPIO()
 		{
 			off_t gpio_base_address = static_cast<off_t>(mRPiSettings.MemBasePeriph + mRPiSettings.MemOffsetGPIO);// base address for GPIO memory
-			std::cout << "gpio_base_address is 0x" << std::setbase(16) << gpio_base_address << std::endl;			
+			//std::cout << "gpio_base_address is 0x" << std::setbase(16) << gpio_base_address << std::endl;			
 
 			mMemFD = open(mRPiSettings.MemPath.c_str(), O_RDWR | O_SYNC);// open driver
 			if (mMemFD<0) throw std::runtime_error("Cannot open memory device: try using sudo to run your program");
 			setPtr(mmap(NULL, mRPiSettings.MemMapSize, (PROT_READ | PROT_WRITE), MAP_SHARED, mMemFD, gpio_base_address));//memory is mapped and a pointer is returned
-			std::cout << "pointer is 0x" << (reinterpret_cast<std::uint32_t>(getPtr())) << std::endl;
-			std::cout << std::setbase(10);
+			//std::cout << "pointer is 0x" << (reinterpret_cast<std::uint32_t>(getPtr())) << std::endl;
+			//std::cout << std::setbase(10);
 		}
 
 		~GPIO()
