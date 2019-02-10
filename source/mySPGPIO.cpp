@@ -102,7 +102,6 @@ namespace sp {
 
 		// Get current state of target register.
 		uint32_t pinmode_now = readRegBits(pin_ptr);
-		//std::cout << "initial pins  :" << std::bitset<32>(pinmode_now) << std::endl;
 
 		// Get pinmode code to set target bits in target register.
 		uint32_t p_mode_code = static_cast<std::uint32_t>(p_mode);
@@ -113,16 +112,12 @@ namespace sp {
 
 		// Mask 000's over the target bits in target register.
 		uint32_t mask = (~(0x7 << pin_number_shift));
-		//std::cout << "desired change:" << std::bitset<32>(des_output) << std::endl;
-		//std::cout << "bit mask:      " << std::bitset<32>(mask) << std::endl;
 
 		// Get new state for the target register.
 		des_output = (pinmode_now & mask) | (des_output & ~mask);
-		//std::cout << "output:        " << std::bitset<32>(des_output) << std::endl;
 
 		// Set target register.
 		setRegBits(pin_ptr, des_output);
-		//std::cout << "after :        " << std::bitset<32>(readRegBits(pin_ptr)) << std::endl;
 
 		return 1;//Return 1 if mode didn't fail.
 	}
@@ -159,23 +154,14 @@ namespace sp {
 
 		// Get current state of target register.
 		uint32_t pinmode_now = readRegBits(pin_ptr);
-		//std::cout << "initial pins  :" << std::bitset<32>(pinmode_now) << std::endl;
 
 		// Shift the target pin over to the correct bits in target register.
 		int pin_number_shift = (pin_number % 32);
 		uint32_t des_output = (0x1 << pin_number_shift);
 
-		// Mask "...11011..." over the target bit in target register.
-		uint32_t mask = (~(0x1 << pin_number_shift));
-		//std::cout << "desired change:" << std::bitset<32>(des_output) << std::endl;
-		//std::cout << "bit mask:      " << std::bitset<32>(mask) << std::endl;
-		// Get new state for the target register.
-		des_output = (pinmode_now & mask) | (des_output & ~mask);
-		//std::cout << "output:        " << std::bitset<32>(des_output) << std::endl;
 		// Set target register.
 		setRegBits(pin_ptr, des_output);
 
-		//std::cout << "after :        " << std::bitset<32>(readRegBits(pin_ptr)) << std::endl;
 		return 1;//Return 1 if mode didn't fail.
 	}
 
@@ -243,6 +229,4 @@ namespace sp {
 		}
 		cout << endl;
 	}
-
-	//void showRegister
 }
