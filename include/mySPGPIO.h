@@ -24,6 +24,16 @@ namespace sp {
 		uint32_t readRegBits(void*);
 
 		int setRegBits(void*, uint32_t);
+		
+		// Left shift for the function select bits for each GPIO pin in
+		// its function select register.
+		static int FUNC_SEL_SHIFT[];
+		static int RW_SHIFT[];
+		
+		static GPIOregisters FUNC_SEL_REG[];
+		static GPIOregisters R_REG[];
+		static GPIOregisters W_H_REG[];
+		static GPIOregisters W_L_REG[];
 
 	public:
 		GPIOregisters getPinModeReg(int);

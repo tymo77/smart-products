@@ -1,6 +1,64 @@
 #include "../include/mySPGPIO.h"
 
 namespace sp {
+	
+	int MyGPIO::FUNC_SEL_SHIFT[] = {
+		0,3,6,9,12,15,18,21,24,27,
+		0,3,6,9,12,15,18,21,24,27,
+		0,3,6,9,12,15,18,21,24,27,
+		0,3,6,9,12,15,18,21,24,27,
+		0,3,6,9,12,15,18,21,24,27,
+		0,3,6,9,12,15,18,21,24,27
+	};
+		
+	int MyGPIO::RW_SHIFT[] = {
+		0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,
+		0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31
+	};
+		
+	GPIO::GPIOregisters MyGPIO::FUNC_SEL_REG[] = {
+		GPIOregisters::SR0, GPIOregisters::SR0, GPIOregisters::SR0, GPIOregisters::SR0, GPIOregisters::SR0, GPIOregisters::SR0, GPIOregisters::SR0, GPIOregisters::SR0, GPIOregisters::SR0, GPIOregisters::SR0,
+		GPIOregisters::SR1, GPIOregisters::SR1, GPIOregisters::SR1, GPIOregisters::SR1, GPIOregisters::SR1, GPIOregisters::SR1, GPIOregisters::SR1, GPIOregisters::SR1, GPIOregisters::SR1, GPIOregisters::SR1,
+		GPIOregisters::SR2, GPIOregisters::SR2, GPIOregisters::SR2, GPIOregisters::SR2, GPIOregisters::SR2, GPIOregisters::SR2, GPIOregisters::SR2, GPIOregisters::SR2, GPIOregisters::SR2, GPIOregisters::SR2,
+		GPIOregisters::SR3, GPIOregisters::SR3, GPIOregisters::SR3, GPIOregisters::SR3, GPIOregisters::SR3, GPIOregisters::SR3, GPIOregisters::SR3, GPIOregisters::SR3, GPIOregisters::SR3, GPIOregisters::SR3,
+		GPIOregisters::SR4, GPIOregisters::SR4, GPIOregisters::SR4, GPIOregisters::SR4, GPIOregisters::SR4, GPIOregisters::SR4, GPIOregisters::SR4, GPIOregisters::SR4, GPIOregisters::SR4, GPIOregisters::SR4,
+		GPIOregisters::SR5, GPIOregisters::SR5, GPIOregisters::SR5, GPIOregisters::SR5, GPIOregisters::SR5, GPIOregisters::SR5, GPIOregisters::SR5, GPIOregisters::SR5, GPIOregisters::SR5, GPIOregisters::SR5
+	};
+	
+	GPIO::GPIOregisters MyGPIO::R_REG[] = {
+		GPIOregisters::Read0, GPIOregisters::Read0, GPIOregisters::Read0, GPIOregisters::Read0, GPIOregisters::Read0, GPIOregisters::Read0, GPIOregisters::Read0, GPIOregisters::Read0,
+		GPIOregisters::Read0, GPIOregisters::Read0, GPIOregisters::Read0, GPIOregisters::Read0, GPIOregisters::Read0, GPIOregisters::Read0, GPIOregisters::Read0, GPIOregisters::Read0,
+		GPIOregisters::Read0, GPIOregisters::Read0, GPIOregisters::Read0, GPIOregisters::Read0, GPIOregisters::Read0, GPIOregisters::Read0, GPIOregisters::Read0, GPIOregisters::Read0,
+		GPIOregisters::Read0, GPIOregisters::Read0, GPIOregisters::Read0, GPIOregisters::Read0, GPIOregisters::Read0, GPIOregisters::Read0, GPIOregisters::Read0, GPIOregisters::Read0,
+		GPIOregisters::Read1, GPIOregisters::Read1, GPIOregisters::Read1, GPIOregisters::Read1, GPIOregisters::Read1, GPIOregisters::Read1, GPIOregisters::Read1, GPIOregisters::Read1,
+		GPIOregisters::Read1, GPIOregisters::Read1, GPIOregisters::Read1, GPIOregisters::Read1, GPIOregisters::Read1, GPIOregisters::Read1, GPIOregisters::Read1, GPIOregisters::Read1,
+		GPIOregisters::Read1, GPIOregisters::Read1, GPIOregisters::Read1, GPIOregisters::Read1, GPIOregisters::Read1, GPIOregisters::Read1, GPIOregisters::Read1, GPIOregisters::Read1,
+		GPIOregisters::Read1, GPIOregisters::Read1, GPIOregisters::Read1, GPIOregisters::Read1, GPIOregisters::Read1, GPIOregisters::Read1, GPIOregisters::Read1, GPIOregisters::Read1
+	};
+	
+	GPIO::GPIOregisters MyGPIO::W_H_REG[] = {
+		GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0,
+		GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0,
+		GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0,
+		GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0, GPIOregisters::WriteHigh0,
+		GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1,
+		GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1,
+		GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1,
+		GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1, GPIOregisters::WriteHigh1
+	};
+	
+	GPIO::GPIOregisters MyGPIO::W_L_REG[] = {
+		GPIOregisters::WriteLow0, GPIOregisters::WriteLow0, GPIOregisters::WriteLow0, GPIOregisters::WriteLow0, GPIOregisters::WriteLow0, GPIOregisters::WriteLow0, GPIOregisters::WriteLow0, GPIOregisters::WriteLow0,
+		GPIOregisters::WriteLow0, GPIOregisters::WriteLow0, GPIOregisters::WriteLow0, GPIOregisters::WriteLow0, GPIOregisters::WriteLow0, GPIOregisters::WriteLow0, GPIOregisters::WriteLow0, GPIOregisters::WriteLow0,
+		GPIOregisters::WriteLow0, GPIOregisters::WriteLow0, GPIOregisters::WriteLow0, GPIOregisters::WriteLow0, GPIOregisters::WriteLow0, GPIOregisters::WriteLow0, GPIOregisters::WriteLow0, GPIOregisters::WriteLow0,
+		GPIOregisters::WriteLow0, GPIOregisters::WriteLow0, GPIOregisters::WriteLow0, GPIOregisters::WriteLow0, GPIOregisters::WriteLow0, GPIOregisters::WriteLow0, GPIOregisters::WriteLow0, GPIOregisters::WriteLow0,
+		GPIOregisters::WriteLow1, GPIOregisters::WriteLow1, GPIOregisters::WriteLow1, GPIOregisters::WriteLow1, GPIOregisters::WriteLow1, GPIOregisters::WriteLow1, GPIOregisters::WriteLow1, GPIOregisters::WriteLow1,
+		GPIOregisters::WriteLow1, GPIOregisters::WriteLow1, GPIOregisters::WriteLow1, GPIOregisters::WriteLow1, GPIOregisters::WriteLow1, GPIOregisters::WriteLow1, GPIOregisters::WriteLow1, GPIOregisters::WriteLow1,
+		GPIOregisters::WriteLow1, GPIOregisters::WriteLow1, GPIOregisters::WriteLow1, GPIOregisters::WriteLow1, GPIOregisters::WriteLow1, GPIOregisters::WriteLow1, GPIOregisters::WriteLow1, GPIOregisters::WriteLow1,
+		GPIOregisters::WriteLow1, GPIOregisters::WriteLow1, GPIOregisters::WriteLow1, GPIOregisters::WriteLow1, GPIOregisters::WriteLow1, GPIOregisters::WriteLow1, GPIOregisters::WriteLow1, GPIOregisters::WriteLow1
+	};
+	
+	
 	uint32_t MyGPIO::readRegBits(void* ptr) {
 		return *(reinterpret_cast<std::uint32_t *>(ptr));
 	}
@@ -10,78 +68,78 @@ namespace sp {
 		return 1;
 	}
 
-	GPIO::GPIOregisters MyGPIO::getPinModeReg(int pin_number) {
-		GPIOregisters pin_reg;
-		switch (pin_number / 10) {
-		case 0:
-			pin_reg = GPIOregisters::SR0;
-			break;
-		case 1:
-			pin_reg = GPIOregisters::SR1;
-			break;
-		case 2:
-			pin_reg = GPIOregisters::SR2;
-			break;
-		case 3:
-			pin_reg = GPIOregisters::SR3;
-			break;
-		case 4:
-			pin_reg = GPIOregisters::SR4;
-			break;
-		case 5:
-			pin_reg = GPIOregisters::SR4;
-			break;
-		default:
-			throw std::runtime_error("getPinModeReg(): pin # out of range");
-		}
-		return pin_reg;
-	}
+	//~ GPIO::GPIOregisters MyGPIO::getPinModeReg(int pin_number) {
+		//~ GPIOregisters pin_reg;
+		//~ switch (pin_number / 10) {
+		//~ case 0:
+			//~ pin_reg = GPIOregisters::SR0;
+			//~ break;
+		//~ case 1:
+			//~ pin_reg = GPIOregisters::SR1;
+			//~ break;
+		//~ case 2:
+			//~ pin_reg = GPIOregisters::SR2;
+			//~ break;
+		//~ case 3:
+			//~ pin_reg = GPIOregisters::SR3;
+			//~ break;
+		//~ case 4:
+			//~ pin_reg = GPIOregisters::SR4;
+			//~ break;
+		//~ case 5:
+			//~ pin_reg = GPIOregisters::SR5;
+			//~ break;
+		//~ default:
+			//~ throw std::runtime_error("getPinModeReg(): pin # out of range");
+		//~ }
+		//~ return pin_reg;
+	//~ }
 
-	GPIO::GPIOregisters MyGPIO::getPinReadReg(int pin_number) {
-		GPIOregisters pin_reg;
+	//~ GPIO::GPIOregisters MyGPIO::getPinReadReg(int pin_number) {
+		//~ GPIOregisters pin_reg;
 
-		switch (pin_number / 32) {
-		case 0:
-			pin_reg = GPIOregisters::Read0;
-			break;
-		case 1:
-			pin_reg = GPIOregisters::Read1;
-			break;
-		default:
-			throw std::runtime_error("getPinReadReg(): pin # out of range");
-		}
+		//~ switch (pin_number / 32) {
+		//~ case 0:
+			//~ pin_reg = GPIOregisters::Read0;
+			//~ break;
+		//~ case 1:
+			//~ pin_reg = GPIOregisters::Read1;
+			//~ break;
+		//~ default:
+			//~ throw std::runtime_error("getPinReadReg(): pin # out of range");
+		//~ }
 
-		return pin_reg;
-	}
+		//~ return pin_reg;
+	//~ }
 
-	GPIO::GPIOregisters MyGPIO::getPinHighReg(int pin_number) {
-		GPIOregisters pin_reg;
-		switch (pin_number / 32) {
-		case 0:
-			pin_reg = GPIOregisters::WriteHigh0;
-			break;
-		case 1:
-			pin_reg = GPIOregisters::WriteHigh1;
-		default:
-			throw std::runtime_error("getPinHighReg(): pin # out of range");
-		}
-		return pin_reg;
-	}
+	//~ GPIO::GPIOregisters MyGPIO::getPinHighReg(int pin_number) {
+		//~ GPIOregisters pin_reg;
+		//~ switch (pin_number / 32) {
+		//~ case 0:
+			//~ pin_reg = GPIOregisters::WriteHigh0;
+			//~ break;
+		//~ case 1:
+			//~ pin_reg = GPIOregisters::WriteHigh1;
+		//~ default:
+			//~ throw std::runtime_error("getPinHighReg(): pin # out of range");
+		//~ }
+		//~ return pin_reg;
+	//~ }
 
-	GPIO::GPIOregisters MyGPIO::getPinLowReg(int pin_number) {
-		GPIOregisters pin_reg;
-		switch (pin_number / 32) {
-		case 0:
-			pin_reg = GPIOregisters::WriteLow0;
-			break;
-		case 1:
-			pin_reg = GPIOregisters::WriteLow1;
-			break;
-		default:
-			throw std::runtime_error("getPinLowReg(): pin # out of range");
-		}
-		return pin_reg;
-	}
+	//~ GPIO::GPIOregisters MyGPIO::getPinLowReg(int pin_number) {
+		//~ GPIOregisters pin_reg;
+		//~ switch (pin_number / 32) {
+		//~ case 0:
+			//~ pin_reg = GPIOregisters::WriteLow0;
+			//~ break;
+		//~ case 1:
+			//~ pin_reg = GPIOregisters::WriteLow1;
+			//~ break;
+		//~ default:
+			//~ throw std::runtime_error("getPinLowReg(): pin # out of range");
+		//~ }
+		//~ return pin_reg;
+	//~ }
 
 	int MyGPIO::readPinMode(int pin_number) {
 		void* pin_ptr = getPtr(getPinModeReg(pin_number));
@@ -98,7 +156,7 @@ namespace sp {
 		// sets pin_number to p_mode
 
 		// Get pointer to memory register.
-		void* pin_ptr = getPtr(getPinModeReg(pin_number));
+		void* pin_ptr = getPtr(FUNC_SEL_REG[pin_number]);
 
 		// Get current state of target register.
 		uint32_t pinmode_now = readRegBits(pin_ptr);
@@ -107,7 +165,8 @@ namespace sp {
 		uint32_t p_mode_code = static_cast<std::uint32_t>(p_mode);
 
 		// Shift the target pin over to the correct bits in target register.
-		int pin_number_shift = (pin_number % 10) * 3;
+		//int pin_number_shift = (pin_number % 10) * 3;
+		int pin_number_shift = FUNC_SEL_SHIFT[pin_number];
 		uint32_t des_output = p_mode_code << pin_number_shift;
 
 		// Mask 000's over the target bits in target register.
@@ -125,13 +184,13 @@ namespace sp {
 	int MyGPIO::digitalRead(int pin_number) {
 
 		// Get pointer to memory register.
-		void* pin_ptr = getPtr(getPinReadReg(pin_number));
+		void* pin_ptr = getPtr(R_REG[pin_number]);
 
 		// Get current state of target register.
 		uint32_t pinmode_now = readRegBits(pin_ptr);
 
 		// Mask "...010..." over the target bit in target register.
-		int pin_number_shift = pin_number % 32;
+		int pin_number_shift = RW_SHIFT[pin_number];
 		uint32_t mask = (0x1 << pin_number_shift);
 		uint32_t result = (mask & pinmode_now) >> pin_number_shift;
 
@@ -143,10 +202,10 @@ namespace sp {
 		// Get pointer to memory register.
 		void* pin_ptr;
 		if (out_value == DigitalOut::HIGH) {
-			pin_ptr = getPtr(getPinHighReg(pin_number));
+			pin_ptr = getPtr(W_H_REG[pin_number]);
 		}
 		else if (out_value == DigitalOut::LOW) {
-			pin_ptr = getPtr(getPinLowReg(pin_number));
+			pin_ptr = getPtr(W_L_REG[pin_number]);
 		}
 		else {
 			throw std::runtime_error("digitalWrite(): bad DigitalOut");
@@ -156,7 +215,7 @@ namespace sp {
 		uint32_t pinmode_now = readRegBits(pin_ptr);
 
 		// Shift the target pin over to the correct bits in target register.
-		int pin_number_shift = (pin_number % 32);
+		int pin_number_shift = RW_SHIFT[pin_number];
 		uint32_t des_output = (0x1 << pin_number_shift);
 
 		// Set target register.
