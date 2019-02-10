@@ -142,9 +142,9 @@ namespace sp {
 	//~ }
 
 	int MyGPIO::readPinMode(int pin_number) {
-		void* pin_ptr = getPtr(getPinModeReg(pin_number));
+		void* pin_ptr = getPtr(FUNC_SEL_REG[pin_number]);
 		uint32_t pinmode_now = readRegBits(pin_ptr);
-		int pin_number_shift = (pin_number % 10) * 3;
+		int pin_number_shift = FUNC_SEL_SHIFT[pin_number];
 		pinmode_now = (pinmode_now >> pin_number_shift) & (0x7);
 
 		return static_cast<int>(pinmode_now);
@@ -154,6 +154,11 @@ namespace sp {
 		// pin_number -> pin we want to set.
 		// p_mode -> the mode we want to set this pin to.
 		// sets pin_number to p_mode
+		
+		if (pin_number < 0 || pin_number > 54){
+			std::cout << "pinMode() failed. Bad pin\n";
+			return -1;			
+		}
 
 		// Get pointer to memory register.
 		void* pin_ptr = getPtr(FUNC_SEL_REG[pin_number]);
@@ -182,6 +187,11 @@ namespace sp {
 	}
 
 	int MyGPIO::digitalRead(int pin_number) {
+		
+		if (pin_number < 0 || pin_number > 54){
+			std::cout << "digitalRead() failed. Bad pin\n";
+			return -1;			
+		}
 
 		// Get pointer to memory register.
 		void* pin_ptr = getPtr(R_REG[pin_number]);
@@ -198,6 +208,11 @@ namespace sp {
 	}
 
 	int MyGPIO::digitalWrite(int pin_number, DigitalOut out_value) {
+		
+		if (pin_number < 0 || pin_number > 54 || readPinMode(pin_number) != 1){
+			std::cout << "digitalWrite() failed. Bad or non-writable pin\n";
+			return -1;			
+		}
 
 		// Get pointer to memory register.
 		void* pin_ptr;
@@ -230,10 +245,10 @@ namespace sp {
 
 		pinSet.PinLevel = digitalRead(pin_number);
 		pinSet.PinMode = readPinMode(pin_number);
-		pinSet.ModePtr = getPtr(getPinModeReg(pin_number));
-		pinSet.WrPtrH = getPtr(getPinHighReg(pin_number));
-		pinSet.WrPtrL = getPtr(getPinLowReg(pin_number));
-		pinSet.RdPtr = getPtr(getPinReadReg(pin_number));
+		pinSet.ModePtr = getPtr(FUNC_SEL_REG[pin_number]);
+		pinSet.WrPtrH = getPtr(W_H_REG[pin_number]);
+		pinSet.WrPtrL = getPtr(W_L_REG[pin_number]);
+		pinSet.RdPtr = getPtr(R_REG[pin_number]);
 		return pinSet;
 	}
 

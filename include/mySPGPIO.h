@@ -36,13 +36,13 @@ namespace sp {
 		static GPIOregisters W_L_REG[];
 
 	public:
-		GPIOregisters getPinModeReg(int);
+		//GPIOregisters getPinModeReg(int);
 
-		GPIOregisters getPinReadReg(int);
+		//GPIOregisters getPinReadReg(int);
 
-		GPIOregisters getPinHighReg(int);
+		//GPIOregisters getPinHighReg(int);
 
-		GPIOregisters getPinLowReg(int);
+		//GPIOregisters getPinLowReg(int);
 
 		int readPinMode(int);
 
