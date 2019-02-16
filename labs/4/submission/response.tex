@@ -1,0 +1,153 @@
+\documentclass{article}
+\usepackage[letterpaper, total={7in, 8in}]{geometry}
+\usepackage[utf8]{inputenc}
+%\usepackage[english]{babel}
+\usepackage[]{amsthm} %lets us use \begin{proof}
+\usepackage[]{amsmath}
+\usepackage[]{amssymb} %gives us the character \varnothing
+\usepackage{mathrsfs}
+\usepackage{graphicx}
+\usepackage{adjustbox}
+\usepackage{titlesec}
+\usepackage[numbered,framed]{matlab-prettifier}
+\usepackage{listings}
+\usepackage[t1,OT1]{fontenc}
+\usepackage{filecontents}
+\usepackage{float}
+\usepackage{physics}
+\usepackage{csvsimple}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{algorithmicx}
+\usepackage{mathtools}
+\usepackage{breqn}
+\usepackage{framed,color}
+\usepackage{amsmath,mleftright}
+\usepackage{xparse}
+\usepackage{titling}
+\usepackage{tabularx}
+
+\usepackage{hyperref}
+
+\setlength{\droptitle}{-10em}   % This is your set screw
+
+\NewDocumentCommand{\evalat}{sO{\big}mm}{%
+	\IfBooleanTF{#1}
+	{\mleft. #3 \mright|_{#4}}
+	{#3#2|_{#4}}%
+}
+
+
+\DeclareMathOperator{\atantwo}{atan2}
+
+\titleformat{\section}{\normalfont\Large\bfseries}{Section \thesection.}{1em}{}
+\titleformat{\subsection}{\normalfont\bfseries}{\alph{subsection})}{1em}{}
+%\definecolor{shadecolor}{gray}{0.9}
+
+\title{Smart Products Lab 3}
+\author{Tyler Morrison}
+\date\today
+
+%\lstset{
+%	style              = Matlab-editor,
+%	basicstyle         = \mlttfamily,
+%	escapechar         = ",
+%	mlshowsectionrules = true,
+%	literate = {-}{-}1, % <hyphens will not show up unless you add this
+%}
+
+\lstset{
+	language=C++,
+	basicstyle=\ttfamily,
+	keywordstyle=\color{blue}\ttfamily,
+	stringstyle=\color{red}\ttfamily,
+	commentstyle=\color{green}\ttfamily,
+	morecomment=[l][\color{magenta}]{\#},
+	numbers=left,
+	stepnumber=1,
+	frame=single
+}
+
+\renewcommand{\lstlistingname}{Program}% Listing -> Algorithm
+
+\begin{document}
+\maketitle
+\section{}
+\subsection{Algorithms for manipulating, reading and writing to registers.}
+\begin{itemize}
+	\item \texttt{int pinMode(int pin_number, PinModes p_mode) override:}
+		\begin{enumerate}
+			\item use \texttt{getPtr} to get the memory register needed to write the pin mode.
+			\item use \texttt{readRegBits} to get the current register state.
+			\item cast the pin mode integer to the associated (binary) register state.
+			\item bit shift the desired register state over to the correct registers based on the pin number.
+			\item bit shift a mask of zeros to the target registers.
+			\item get the new state of the register by ANDing the mask and the old pin state and ORing that with the desired register changes.
+			\item use \texttt{setRegBits} to write the new desired state to the target register.
+		\end{enumerate}
+	\item \texttt{int digitalRead(int pin_number) override:}
+		\begin{enumerate}
+			\item use \texttt{getPtr} to get the memory register needed to write the pin mode.
+			\item use \texttt{readRegBits} to get the current register state.
+			\item bit shift the single-bit mask over to the target bit in the register. 
+			\item AND the mask with the current regsiter state and shift the pin to the front of the register.
+			\item convert the register binary to an \texttt{int} and return it.
+		\end{enumerate}
+	\item \texttt{int digitalWrite(int pin_number, DigitalOut out_value) override:}
+		\begin{enumerate}
+			\item use \texttt{getPtr} to get the memory register needed to write the pin mode.
+			\item use \texttt{readRegBits} to get the current register state.
+			\item bit shift a 1 over to the target bit in the register. 
+			\item bit shift a single bit mask to the target bit in the register.
+			\item AND the mask with the current register state and OR that with the desired desired output bit.
+			\item use \texttt{setRegBits} to write the new desired state to the target register. 
+		\end{enumerate}
+\end{itemize}
+
+\subsection{Efficiency considerations}
+In order to improve efficiency, I used static arrays to get the registers and shifts for each pin for read, write high, write low, and pin mode. This might use a little bit more memory but it precludes a bunch of logic and modular arithmetic that might otherwise be used to determine them at runtime each time you need to operate on a pin. 
+
+\subsection{Extra functions}%
+\begin{tabularx}{\linewidth}{lX}
+	\texttt{uint32_t readRegBits(void*):}
+	& Read the bits in a register from the pointer.\\[1em]
+	\texttt{int setRegBits(void*, uint32_t):}
+	& Write the bits in a register given by the pointer.\\[1em]
+	\texttt{int readPinMode(int):}
+	& Read the pinmode of a pin number\\[1em]
+	\texttt{void updatePinSettings(int, PinSettings \&):}
+	& Update only the pin settings of a pin that can change, i.e: the state and mode.\\[2em]
+	\texttt{void showPins():}
+	& Print all the pins to the screen.\\[1em]
+	\texttt{void showPins(const std::vector<int> \&):}
+	& Print the selected pins to the screen.\\[1em]
+	\texttt{void main:}
+	& I added the ability to accept an optional pin number argument to my main function. This helped me test a bunch of pins on my Pi with LEDs without recompiling.\\[1em]
+\end{tabularx}
+
+\subsection{Bitwise operators}
+Bitshifts were used to shift desired outputs and masks over to the correct bits in the register. Bit-wise AND's and OR's were used with bitmasks to change single bits in the register without affecting bits other than the targets.
+
+\subsection{Error checking}
+The main error checking I did was check for and throw errors for pin numbers that were outside of the allowed range. When writing to a pin, I also first check if it is set to write mode. For both of these common errors, the behavior is to return from the function with a flag: \texttt{-1}.
+
+\section{}
+\subsection{What information would have helped me better understand the lab?}
+I'd like to know a little bit more about memory mapping and the exact mechanics of how that works in this lab, but that's all I can think of.
+
+\subsection{Output}
+\lstset{
+	language={},
+	basicstyle=\ttfamily,
+	keywordstyle=\color{blue}\ttfamily,
+	stringstyle=\color{red}\ttfamily,
+	commentstyle=\color{green}\ttfamily,
+	morecomment=[l][\color{magenta}]{\#},
+	numbers=left,
+	stepnumber=1,
+	frame=single
+}
+
+\lstinputlisting[caption = {Output of labthree.cpp}]{../lin/main.sol}
+
+\end{document}
