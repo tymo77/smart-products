@@ -21,8 +21,8 @@ constexpr int R_DELAY = 0;
 
 namespace sp {
 
-	int MC24XX::DEF_ADDR = 0x50;
-	int MC24XX::MEM_SIZE = 256;
+	int MC24XX::DEF_ADDR = 0x50;//DEFAULT i2c address for the EEPROMs
+	int MC24XX::MEM_SIZE = 128;
 
 	void MC24XX::write(int add, int data) {
 		if(add >= MC24XX::MEM_SIZE) throw std::runtime_error("write(): address out of range");

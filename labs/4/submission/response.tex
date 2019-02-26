@@ -73,69 +73,84 @@
 \begin{document}
 \maketitle
 \section{}
-\subsection{Algorithms for manipulating, reading and writing to registers.}
+\subsection{Prelab Step 1}
+%Clock frequency
+The clock frequency is 100 kHz.
+%Time constant rising data
+With 1 k$\Omega$ pull-up resistors, the time constant, as determined by an exponential fit to the rising data line is, $3.35 \times 10^{-8}$ seconds.
+%Time constant falling data
+The falling line has significant undershoot which means it has second-order behavior. As such, it is difficult to identify an exact time constant from the output because it is either an underdamped second order system or a system with two dominant poles on the real axis that are near to each other. Considering these possibilities, I estimate a time constant of around $7 \times 10^{-8}$ to $1 \times 10^{-7}$ seconds.
+%OVershoot rising/falling
+Undershoot on this falling data line was about 23 percent of the difference between the high and low logic levels on the data line.
+\subsection{Prelab Step 2}%0.1uF calacitor
+%Time constaant falling or rising. Program output
+Adding the 0.1$\mu$F capacitor increased the rising data time constant to $7.25 \times 10^{-5}$ seconds and increased the falling data time constant to $6.46 \times 10^{-6}$ seconds and as a result, the Pi failed to communicate with the device at all.
+%Other resistance/capacitors
+Adding a 1k$\Omega$ resistor in series with the capacitor was enough to drop the falling time constant back down to about $1.7 \times 10^{-8}$ seconds and permit communication to occur again.
+\begin{figure}[H]
+	\centering
+	\includegraphics[keepaspectratio,width=.6\linewidth]{./prelab_screenshots/1.png}
+	\caption{I2C clock and data lines with 1k pull-up resistor.}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[keepaspectratio,width=.6\linewidth]{./prelab_screenshots/2.png}
+	\caption{I2C clock and data lines with 1k pull-up resistor, and 1uF capacitor.}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[keepaspectratio,width=.6\linewidth]{./prelab_screenshots/3.png}
+	\caption{I2C clock and data lines with 1k pull-up resistor, and 1uF capacitor in series with 1k resistor.}
+\end{figure}
+\section{}
+\subsection{Solution Implementation}
+I intentionally used fewer classes than the example. I wanted one class for each chip. For what we have to do in this lab, I did not feel the need to write a whole other class to wrap the two together. If we end up using this setup more in the future to the extent that I feel the need to simplify random reading and writing across multiple EEPROMs via the multiplexer, that will be a very very simple addition.
 \begin{itemize}
-	\item \texttt{int pinMode(int pin_number, PinModes p_mode) override:}
-		\begin{enumerate}
-			\item use \texttt{getPtr} to get the memory register needed to write the pin mode.
-			\item use \texttt{readRegBits} to get the current register state.
-			\item cast the pin mode integer to the associated (binary) register state.
-			\item bit shift the desired register state over to the correct registers based on the pin number.
-			\item bit shift a mask of zeros to the target registers.
-			\item get the new state of the register by ANDing the mask and the old pin state and ORing that with the desired register changes.
-			\item use \texttt{setRegBits} to write the new desired state to the target register.
-		\end{enumerate}
-	\item \texttt{int digitalRead(int pin_number) override:}
-		\begin{enumerate}
-			\item use \texttt{getPtr} to get the memory register needed to write the pin mode.
-			\item use \texttt{readRegBits} to get the current register state.
-			\item bit shift the single-bit mask over to the target bit in the register. 
-			\item AND the mask with the current regsiter state and shift the pin to the front of the register.
-			\item convert the register binary to an \texttt{int} and return it.
-		\end{enumerate}
-	\item \texttt{int digitalWrite(int pin_number, DigitalOut out_value) override:}
-		\begin{enumerate}
-			\item use \texttt{getPtr} to get the memory register needed to write the pin mode.
-			\item use \texttt{readRegBits} to get the current register state.
-			\item bit shift a 1 over to the target bit in the register. 
-			\item bit shift a single bit mask to the target bit in the register.
-			\item AND the mask with the current register state and OR that with the desired desired output bit.
-			\item use \texttt{setRegBits} to write the new desired state to the target register. 
-		\end{enumerate}
+	\item \texttt{class MC24XX} in \texttt{24XXEEPROM.h}
+		\begin{itemize}
+			\item \texttt{void write(int add, int data)}: writes data byte to address using \texttt{wiringPiI2C}. Sleeps thread for 4000 microseconds to permit complete writing.
+			\item \texttt{int read(int add)}: reads data bye to address using \texttt{wiringPiI2C}.
+			\item \texttt{MC24XX()}: constructor runs the Wiring Pi I2C setup setting slave.
+		\end{itemize}
+	\item \texttt{class CD405} in \texttt{CD405PLEX.h}
+		\begin{itemize}
+			\item \texttt{CD405(int pinA, int pinB)}: constructor declares the two pins that control the multiplexer. 
+			\item \texttt{void setPlex(int c)}: sets the multiplexer switch to the given mode 0-3.
+		\end{itemize}
+	\item Typical use switching EEPROMs and writing to an address.
 \end{itemize}
+\begin{lstlisting}
+cd405.setPlex(i); // Switch to multiplexer i
+mc24xx.write(j, data[j]); // Write to register address j, data element j
+\end{lstlisting}
+\subsection{Read/Write Timing}
+I tested timing required for reads and writes by running and compiling my test script while decreasing the wait times for read and write until errors occurs. Testing on my Pi, I got down to 4000 microsecond waits for writes and no waiting for reads. Without waiting on writes, the write had undefined behavior when checked with a subsequent read. Sometimes it seemed to be the previously written value. Sometimes I couldn't explain the value written and subsequently read back. No wait was need in the read, perhaps because the thread knows it has to wait to read in the value required before continuing execution. Perhaps there exists some way to implement this same concept for writes that eliminates the need for open loop waits. In any case, write speed is much slower.
 
-\subsection{Efficiency considerations}
-In order to improve efficiency, I used static arrays to get the registers and shifts for each pin for read, write high, write low, and pin mode. This might use a little bit more memory but it precludes a bunch of logic and modular arithmetic that might otherwise be used to determine them at runtime each time you need to operate on a pin. 
-
-\subsection{Extra functions}%
-\begin{tabularx}{\linewidth}{lX}
-	\texttt{uint32_t readRegBits(void*):}
-	& Read the bits in a register from the pointer.\\[1em]
-	\texttt{int setRegBits(void*, uint32_t):}
-	& Write the bits in a register given by the pointer.\\[1em]
-	\texttt{int readPinMode(int):}
-	& Read the pinmode of a pin number\\[1em]
-	\texttt{void updatePinSettings(int, PinSettings \&):}
-	& Update only the pin settings of a pin that can change, i.e: the state and mode.\\[2em]
-	\texttt{void showPins():}
-	& Print all the pins to the screen.\\[1em]
-	\texttt{void showPins(const std::vector<int> \&):}
-	& Print the selected pins to the screen.\\[1em]
-	\texttt{void main:}
-	& I added the ability to accept an optional pin number argument to my main function. This helped me test a bunch of pins on my Pi with LEDs without recompiling.\\[1em]
-\end{tabularx}
-
-\subsection{Bitwise operators}
-Bitshifts were used to shift desired outputs and masks over to the correct bits in the register. Bit-wise AND's and OR's were used with bitmasks to change single bits in the register without affecting bits other than the targets.
-
-\subsection{Error checking}
-The main error checking I did was check for and throw errors for pin numbers that were outside of the allowed range. When writing to a pin, I also first check if it is set to write mode. For both of these common errors, the behavior is to return from the function with a flag: \texttt{-1}.
+\subsection{Incremental Testing}
+I utilized incremental testing by first practicing switching the multiplexer with LEDs indicating success, then wrapping this code in a class, then adding in the EEPROM and finally be implementing a full random data read/writes test across all registers and EEPROMs with error checking.
 
 \section{}
-\subsection{What information would have helped me better understand the lab?}
-I'd like to know a little bit more about memory mapping and the exact mechanics of how that works in this lab, but that's all I can think of.
+\subsection{Measurements and screenshots}
+%Pull-up resistor
+The pull-up resistor we used was 2k$\Omega$.
+%Clock frequency
+The clock frequency was 100kHz.
+%Rise time for rising edge data
+The 10\% to 90\% rise time for the rising edge of the data line at the EEPROM was about $2.30 \times 10^{-7}$ seconds or about 230 ns.
+%Rising/falling overshoot
+There was no overshoot on the rising line. There was undershoot of about 11\% of the logic high to logic low difference on the falling edge at the output pin of the Pi, however by the time the signal propagated to the input pin of the EEPROM, there was no undershoot. This is not surprising considering the additional damping discovered in the EEPROM.
+%Screenshot of digital/analog signals
+\begin{figure}[H]
+	\centering
+	\includegraphics[keepaspectratio,width=.6\linewidth]{./lab_screenshots/tek00001.png}
+	\caption{These are the analog and digital bus signals for the data and clock lines at the Pi. The signal includes a write command to the EEPROM with address 0x50, the register address 0x0, and the data value 0x2 which can all be clearly seen and verify the i2c implementation.}
+\end{figure}
 
-\subsection{Output}
+\subsection{Signal timing across multiplexer}
+The signal falling from logic high to about 0.5 V had about a $1.68 \times 10^{-8}$ second delay from the Pi side of the multiplexer to the EEPROM side of the multiplexer - and was remarkably consistent across all multiplexer channels. This delay was not a transport delay but rather the delay associated with increasing the time constant of the circuit node on the EEPROM side of the multiplexer - likely as the result of extra parasitic capacitance in the multiplexer.
+
+\section{}
+I wrote my own code for the lab.cpp file to fully test the EEPROM-multiplexer setup. Here is a portion of the output of my test for lab four.
 \lstset{
 	language={},
 	basicstyle=\ttfamily,
@@ -148,6 +163,7 @@ I'd like to know a little bit more about memory mapping and the exact mechanics 
 	frame=single
 }
 
-\lstinputlisting[caption = {Output of labthree.cpp}]{../lin/main.sol}
+\lstinputlisting[caption = {Output of labthree.cpp},firstline=776,firstnumber=776,lastline=777]{../lin/main.sol}
 
+Here we can see that I2C is PAINFULLY slow and why we only use it for simple components, small data, and not for actual computing.
 \end{document}

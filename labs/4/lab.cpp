@@ -20,7 +20,7 @@ int main() {
 	
 	srand (time(NULL));
 	for (int i = 0; i < 128; i++){
-		data[i] = rand() % 128;// random numbers 0-127 (2^7)
+		data[i] = rand() % 256;// random numbers 0-256 (2^8)
 	}
 	
 	//~ sp::MyGPIO gpio;
@@ -71,8 +71,8 @@ int main() {
 	std::chrono::duration<double> w_elapsed = w_finish - start;
 	std::chrono::duration<double> r_elapsed = r_finish - w_finish;
 	
-	double rate_w = 3*256*7 / w_elapsed.count() / 1000; // 3 EEPROMS, 256 registers, 7 bits
-	double rate_r = 3*256*7 / r_elapsed.count() / 1000; // 3 EEPROMS, 256 registers, 7 bits
+	double rate_w = 3*128*8 / w_elapsed.count() / 1000; // 3 EEPROMS, 128 registers, 8 bits
+	double rate_r = 3*128*8 / r_elapsed.count() / 1000; // 3 EEPROMS, 128 registers, 8 bits
 	
 	std::cout << err_ct << " errors detected in r/w test" << std::endl;
 	std::cout << "Elapsed time for writes: " << w_elapsed.count() << " s\n";
