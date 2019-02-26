@@ -4,18 +4,18 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include<string.h>        
-#include<errno.h>
-#include<math.h>
-#include<signal.h>
-#include<unistd.h>
+#include <string.h>        
+#include <errno.h>
+#include <math.h>
+#include <signal.h>
+#include <unistd.h>
 #include "wiringPi.h"
 #include "wiringSerial.h"
 
 #include "Protocol.h"
 #include "command.h"
 #include "Robot.h"
-#include<functional>
+#include <functional>
 
 class Dobot : public Robot
 {
