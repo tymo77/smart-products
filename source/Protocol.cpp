@@ -16,14 +16,14 @@
 ** Descriptions:
 **--------------------------------------------------------------------------------------------------------
 *********************************************************************************************************/
-#include "Protocol.h"
+#include "../include/Protocol.h"
 #include <stdio.h>
 #include <string.h>
-#include "Robot.h"
+#include "../include/Robot.h"
 #ifndef WPi
 #define WPi
 #include <wiringPi.h>
-#include<wiringSerial.h>
+#include <wiringSerial.h>
 #endif
 /*********************************************************************************************************
 ** Protocol buffer definition

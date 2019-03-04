@@ -30,17 +30,17 @@ _description: This is the header file to control the robotic arm, Dobot Magician
 
 #include <stdio.h>
 #include <stdlib.h>
-#include<string.h>
-#include<errno.h>
-#include<math.h>
-#include<signal.h>
-#include<unistd.h>
-#include "Protocol.h"
-#include "command.h"
+#include <string.h>
+#include <errno.h>
+#include <math.h>
+#include <signal.h>
+#include <unistd.h>
+#include "../include/Protocol.h"
+#include "../include/command.h"
 #ifndef WPi
 #define WPi
 #include <wiringPi.h>
-#include<wiringSerial.h>
+#include <wiringSerial.h>
 #endif
 
 //	Serial Communication (USB)

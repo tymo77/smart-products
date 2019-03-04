@@ -19,9 +19,9 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "command.h"
-#include "Protocol.h"
-#include "ProtocolID.h"
+#include "../include/command.h"
+#include "../include/Protocol.h"
+#include "../include/ProtocolID.h"
 
 
 /*********************************************************************************************************

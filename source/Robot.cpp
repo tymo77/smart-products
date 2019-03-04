@@ -10,9 +10,9 @@
 	@version	1.0.0
 */
 
-#include "Robot.h"
-#include "command.h"
-#include "Protocol.h"
+#include "../include/Robot.h"
+#include "../include/command.h"
+#include "../include/Protocol.h"
 
 
 extern int fd;
