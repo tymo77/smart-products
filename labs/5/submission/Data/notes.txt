@@ -1,0 +1,21 @@
+000ALL.csv
+Ch1 - > Vs
+Ch2 - > Average V1 V2
+Ch3 - > LED 1
+Ch4 - > LED 2
+5Hz
+
+
+000ALL.csv
+Ch1 - > Vs
+Ch2 - > Average V1 V2
+Ch3 - > LED 1
+Ch4 - > LED 2
+50.7Hz
+
+~6.6 MHz only LED 1 would come on
+~3.12 MHz only 1 and 2 would come on
+
+~14 Hz was hard to tell if they were blinking in unison or sequentially
+~43 Hz looked like constant illumination.
+LED seemed to go steady first.
