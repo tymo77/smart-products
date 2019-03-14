@@ -24,7 +24,7 @@ namespace sp {
 		idle_timeout = 2; // Idle timeout in seconds.
 
 		i2c_retries = 10; // Number of attempts to send i2c before it fails.
-		i2c_retry_time = 0.01;// Time in seconds between i2c retry attempts.
+		i2c_retry_time = 10;// Time in milliseconds between i2c retry attempts.
 
 		enable_servo1 = false;
 		enable_servo2 = false;
@@ -40,7 +40,7 @@ namespace sp {
 		fd = 0;// Master hardware i2c address?
 
 		setup();
-	}
+	};
 
 	/*
 	Sets up the PanTilt HAT.
@@ -50,11 +50,10 @@ namespace sp {
 			return;
 		}
 		
-		this->clear();
 		this->set_config();
 		this->is_setup = true;
 		return;
-	}
+	};
 
 	/*
 	Set the timeout in seconds.
@@ -96,7 +95,7 @@ namespace sp {
 			throw std::runtime_error("Pulse width out of range.");
 			return -1;
 		}
-	}
+	};
 
 	/*
 	Convert degrees to pulse time (microseconds).
@@ -117,7 +116,7 @@ namespace sp {
 			throw std::runtime_error("Angle out of range.");
 			return -1;
 		}
-	}
+	};
 
 	/*
 	Enable a servo.
@@ -142,7 +141,7 @@ namespace sp {
 		// Send the configuration.
 		this->set_config();
 		return;
-	}
+	};
 	
 	/*
 	Get the angle of a servo.
@@ -152,14 +151,15 @@ namespace sp {
 		
 		// Run setup (will short-circuit if already setup).
 		this->setup();
+		int read_add = 0;
 
 		if (index == 1) {
 			// SERVO 1
-			int read_add = PanTilt::REG_SERVO1;
+			read_add = PanTilt::REG_SERVO1;
 		}
 		else if (index == 2) {
 			// SERVO 2
-			int read_add = PanTilt::REG_SERVO2;
+			read_add = PanTilt::REG_SERVO2;
 		}
 		else {
 			throw std::runtime_error("Can't get servo angle. Bad servo index.");
@@ -170,7 +170,7 @@ namespace sp {
 
 		try{
 			// Try to convert the pulse with to an angle.
-			return this->servo_us_to_deg(us,servo_min[index],servo_max[index] )
+			return this->servo_us_to_deg(us,servo_min[index],servo_max[index]);
 		}
 		catch (const std::exception& e){
 			// If there is an error. Report a zero.
@@ -187,6 +187,7 @@ namespace sp {
 	void PanTilt::set_angle(int index, int angle) {
 		// Run setup (will short-circuit if already setup).
 		this->setup();
+		int reg = 0;
 
 		if (index == 1) {
 			// SERVO 1
@@ -194,7 +195,7 @@ namespace sp {
 				this->enable_servo1 = true;
 				this->set_config();
 			}
-			int reg = PanTilt::REG_SERVO1;
+			reg = PanTilt::REG_SERVO1;
 		}
 		else if (index == 2) {
 			// SERVO 2
@@ -202,7 +203,7 @@ namespace sp {
 				this->enable_servo2 = true;
 				this->set_config();
 			}
-			int reg = PanTilt::REG_SERVO2;
+			reg = PanTilt::REG_SERVO2;
 			angle = std::min(angle, 20);// Don't go below 20 degrees for servo2
 		}
 		else {
@@ -213,8 +214,8 @@ namespace sp {
 
 		// Build a thread to run the servo movement timeout timer.
 		if (this->idle_timeout > 0) {
-			std::thread end_thread(this->timed_stop,this->idle_timeout,index);
-			end_thread.detach()// Detach this thread so it can run in the background...
+			std::thread end_thread(&PanTilt::timed_stop,this,this->idle_timeout,index);
+			end_thread.detach();// Detach this thread so it can run in the background...
 				//... after it goes out of scope.
 		}
 		return;
@@ -247,13 +248,13 @@ namespace sp {
 	*/
 	void PanTilt::i2c_write_byte(int address, int data) {
 		// Try up to a certain number of times to write to device.
-		for (int i = 0; i < this->i2c_retries; i++) {
+		for (int i = 0; i < this->i2c_retries; ++i) {
 			try{
 				this->write_8bit(address, data);
 				return;
 			}
 			catch (const std::exception& e){
-				std::this_thread::sleep_for(std::chrono::seconds(this->i2c_retry_time));
+				std::this_thread::sleep_for(std::chrono::milliseconds(this->i2c_retry_time));
 				std::cerr << "Error writing byte attempt " << i << ": " << e.what() << std::endl;
 				continue;
 			}
@@ -277,7 +278,7 @@ namespace sp {
 				return;
 			}
 			catch (const std::exception& e) {
-				std::this_thread::sleep_for(std::chrono::seconds(this->i2c_retry_time));
+				std::this_thread::sleep_for(std::chrono::milliseconds(this->i2c_retry_time));
 				std::cerr << "Error writing word attempt " << i << ": " << e.what() << std::endl;
 				continue;
 			}
@@ -299,7 +300,7 @@ namespace sp {
 				return r;
 			}
 			catch (const std::exception& e) {
-				std::this_thread::sleep_for(std::chrono::seconds(this->i2c_retry_time));
+				std::this_thread::sleep_for(std::chrono::milliseconds(this->i2c_retry_time));
 				std::cerr << "Error reading byte attempt " << i << ": " << e.what() << std::endl;
 				continue;
 			}
@@ -307,7 +308,7 @@ namespace sp {
 
 		throw std::runtime_error("Failed to read byte via i2c.");
 		return 0;
-	}
+	};
 
 	/*
 	Read a word of data from the PanTilt HAT.
@@ -322,7 +323,7 @@ namespace sp {
 				return r;
 			}
 			catch (const std::exception& e) {
-				std::this_thread::sleep_for(std::chrono::seconds(this->i2c_retry_time));
+				std::this_thread::sleep_for(std::chrono::milliseconds(this->i2c_retry_time));
 				std::cerr << "Error reading word attempt " << i << ": " << e.what() << std::endl;
 				continue;
 			}
@@ -330,18 +331,18 @@ namespace sp {
 
 		throw std::runtime_error("Failed to read word via i2c.");
 		return 0;
-	}
+	};
 
 	/*
 	Function to be run on a separate thread from main execution.
 	Waits for a time before stopping the servo.
 
-	@param secs		- double time in seconds to wait.
+	@param secs		- integer  time in seconds to wait.
 	@param index	- integer index of servo to stop.
 	*/
-	void PanTilt::timed_stop(double secs, int index) {
+	void PanTilt::timed_stop(int secs, int index) {
 		std::this_thread::sleep_for(std::chrono::seconds(secs));
-		this->stop_servo(int index);
+		this->stop_servo(index);
 		return;
-	}
+	};
 }

@@ -10,6 +10,9 @@
 #include <thread>         // std::this_thread::sleep_for
 #include <chrono>         // std::chrono::seconds
 
+#include <sys/ioctl.h>
+#include <stdlib.h>
+
 #define I2C_SLAVE	0x0703 // Code to set slave for ioctl.
 
 namespace sp {
@@ -43,7 +46,7 @@ namespace sp {
 	Set write delay (delays thread execution while waiting for write command to finish).
 	@param		- integer delay in microseconds.
 	*/
-	I2C::set_write_delay(int delay) {
+	void I2C::set_write_delay(int delay) {
 		this->write_delay = delay;
 	}
 
@@ -51,7 +54,7 @@ namespace sp {
 	Get write delay (delays thread execution while waiting for write command to finish).
 	@returns	- integer delay in microseconds.
 	*/
-	int I2C::set_write_delay() {
+	int I2C::get_write_delay() {
 		return this->write_delay;
 	}
 
@@ -61,6 +64,7 @@ namespace sp {
 	@param data		- integer data to write.
 	*/
 	void I2C::write_8bit(int address, int data) {
+		
 		try {
 			wiringPiI2CWriteReg8(this->fd, address, data);
 			std::this_thread::sleep_for(std::chrono::microseconds(this->write_delay));
