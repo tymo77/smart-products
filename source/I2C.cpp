@@ -57,6 +57,23 @@ namespace sp {
 	int I2C::get_write_delay() {
 		return this->write_delay;
 	}
+	
+	/*
+	Attempt to write a byte of int data to device.
+	@param data		- integer data to write.
+	*/
+	void I2C::write_8bit(int data) {
+		
+		try {
+			wiringPiI2CWrite(this->fd, data);
+			std::this_thread::sleep_for(std::chrono::microseconds(this->write_delay));
+			return;
+		}
+		catch (const std::exception& e) {
+			std::cerr << "Error writing byte. " << e.what() << std::endl;
+			return;
+		}
+	};
 
 	/*
 	Attempt to write a byte of int data to device.
@@ -94,7 +111,7 @@ namespace sp {
 	};
 
 	/*
-	Attempt to read a byte of data from the PanTilt HAT.
+	Attempt to read a byte of data from the device.
 	@param address	- integer register address to read from.
 	@returns		- an integer of the data.
 	*/
@@ -108,9 +125,24 @@ namespace sp {
 		}
 		return 0;
 	}
+	
+	/*
+	Attempt to read a byte of data from the device.
+	@returns		- an integer of the data.
+	*/
+	int I2C::read_8bit() {
+		try {
+			int r = wiringPiI2CRead(this->fd);
+			return r;
+		}
+		catch (const std::exception& e) {
+			std::cerr << "Error reading byte. " << e.what() << std::endl;
+		}
+		return 0;
+	}
 
 	/*
-	Attempt to read a word of data from the PanTilt HAT.
+	Attempt to read a word of data from the device.
 	@param address	- integer register address to read from.
 	@returns		- an integer of the data.
 	*/

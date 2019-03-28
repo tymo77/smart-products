@@ -18,8 +18,10 @@ namespace sp {
 		int get_write_delay();
 
 		// Communication
+		int read_8bit();
 		int read_8bit(int);
 		int read_16bit(int);
+		void write_8bit(int);
 		void write_8bit(int, int);
 		void write_16bit(int, int);
 
