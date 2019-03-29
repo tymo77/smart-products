@@ -24,6 +24,7 @@ namespace sp {
 	I2C::I2C(int device_address) {
 		i2c_address = device_address;
 		write_delay = 4000;//Milliseconds
+		read_delay = 0;//Milliseconds
 
 		std::cout << "Setting up i2c device with device id: " << std::setbase(16);
 		std::cout << i2c_address << std::endl << std::setbase(10);
@@ -56,6 +57,22 @@ namespace sp {
 	*/
 	int I2C::get_write_delay() {
 		return this->write_delay;
+	}
+	
+	/*
+	Set read delay (delays thread execution while waiting for read command to finish).
+	@param		- integer delay in microseconds.
+	*/
+	void I2C::set_read_delay(int delay) {
+		this->read_delay = delay;
+	}
+
+	/*
+	Get read delay (delays thread execution while waiting for read command to finish).
+	@returns	- integer delay in microseconds.
+	*/
+	int I2C::get_read_delay() {
+		return this->read_delay;
 	}
 	
 	/*
@@ -118,6 +135,7 @@ namespace sp {
 	int I2C::read_8bit(int address) {
 		try {
 			int r = wiringPiI2CReadReg8(this->fd, address);
+			std::this_thread::sleep_for(std::chrono::microseconds(this->read_delay));
 			return r;
 		}
 		catch (const std::exception& e) {
@@ -133,6 +151,7 @@ namespace sp {
 	int I2C::read_8bit() {
 		try {
 			int r = wiringPiI2CRead(this->fd);
+			std::this_thread::sleep_for(std::chrono::microseconds(this->read_delay));
 			return r;
 		}
 		catch (const std::exception& e) {
@@ -149,6 +168,7 @@ namespace sp {
 	int I2C::read_16bit(int address) {
 		try {
 			int r = wiringPiI2CReadReg16(this->fd, address);
+			std::this_thread::sleep_for(std::chrono::microseconds(this->read_delay));
 			return r;
 		}
 		catch (const std::exception& e) {
