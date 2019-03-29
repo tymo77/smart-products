@@ -7,7 +7,7 @@ main : $(objects)
 	g++ -o main.out lab.cpp $(objects) -lwiringPi
 
 test : $(objects)
-	g++ -o main.out test.cpp $(objects) -lwiringPi
+	g++ -o test.out test.cpp $(objects) -lwiringPi
 		
 I2C.o: $(I2C)
 	g++ -c $(I2C)
