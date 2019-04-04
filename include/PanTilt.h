@@ -21,9 +21,6 @@ namespace sp {
 		bool is_setup;
 		bool enable_servo1;
 		bool enable_servo2;
-		int i2c_retries;
-		int i2c_retry_time;
-		int fd;
 
 		const static int REG_CONFIG = 0x00;
 		const static int REG_SERVO1 = 0x01;
@@ -34,10 +31,7 @@ namespace sp {
 
 		// Communication
 		void timed_stop(int, int);
-		void i2c_write_word(int, int);
-		void i2c_write_byte(int, int);
-		int i2c_read_word(int);
-		int i2c_read_byte(int);
+
 
 	public:
 		// Configuration

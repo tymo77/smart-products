@@ -10,8 +10,6 @@
 #include <thread>         // std::this_thread::sleep_for, std::thread
 #include <chrono>         // std::chrono::seconds
 
-#define I2C_SLAVE	0x0703// Code to tell ioctl to set an i2c slave.
-
 constexpr int W_DELAY = 4000;// Write delay in milliseconds.
 
 namespace sp {
@@ -23,9 +21,6 @@ namespace sp {
 
 		idle_timeout = 2; // Idle timeout in seconds.
 
-		i2c_retries = 10; // Number of attempts to send i2c before it fails.
-		i2c_retry_time = 10;// Time in milliseconds between i2c retry attempts.
-
 		enable_servo1 = false;
 		enable_servo2 = false;
 
@@ -36,8 +31,6 @@ namespace sp {
 		servo_max[1] = 2325;
 		
 		is_setup = false;
-		
-		fd = 0;// Master hardware i2c address?
 
 		setup();
 	};
@@ -74,7 +67,7 @@ namespace sp {
 		unsigned int config = 0;
 		config |= this->enable_servo1;
 		config |= (this->enable_servo2 << 1);
-		this->i2c_write_byte(PanTilt::REG_CONFIG, config);
+		this->resilient_write_8bit(PanTilt::REG_CONFIG, config);
 	}
 
 	/*
@@ -166,7 +159,7 @@ namespace sp {
 		}
 		
 		// Read i2c word.
-		int us = this->i2c_read_word(read_add);
+		int us = this->resilient_read_16bit(read_add);
 
 		try{
 			// Try to convert the pulse with to an angle.
@@ -210,7 +203,7 @@ namespace sp {
 			throw std::runtime_error("Can't command servo. Bad servo index.");
 		}
 		int us = this->servo_deg_to_us(angle, servo_min[index], servo_max[index]);
-		this->i2c_write_word(reg, us);
+		this->resilient_write_16bit(reg, us);
 
 		// Build a thread to run the servo movement timeout timer.
 		if (this->idle_timeout > 0) {
@@ -237,100 +230,6 @@ namespace sp {
 		}
 		this->set_config();
 		return;
-	};
-
-	/*
-	Write a byte of int data to int address on the PanTilt HAT.
-	@param address	- integer address of register to write to
-	@param data		- integer data to write
-
-	i2c_write_byte will attempt to write this->i2c_retries times before throwing an error.
-	*/
-	void PanTilt::i2c_write_byte(int address, int data) {
-		// Try up to a certain number of times to write to device.
-		for (int i = 0; i < this->i2c_retries; ++i) {
-			try{
-				this->write_8bit(address, data);
-				return;
-			}
-			catch (const std::exception& e){
-				std::this_thread::sleep_for(std::chrono::milliseconds(this->i2c_retry_time));
-				std::cerr << "Error writing byte attempt " << i << ": " << e.what() << std::endl;
-				continue;
-			}
-		}
-
-		throw std::runtime_error("Failed to write byte via i2c.");
-	};
-
-	/*
-	Write a word (16bit) of int data to int address on the PanTilt HAT.
-	@param address	- integer address of register to write to.
-	@param data		- integer data to write.
-
-	i2c_write_word will attempt to write this->i2c_retries times before throwing an error.
-	*/
-	void PanTilt::i2c_write_word(int address, int data) {
-		// Try up to a certain number of times to write to device.
-		for (int i = 0; i < this->i2c_retries; i++) {
-			try {
-				this->write_16bit(address, data);
-				return;
-			}
-			catch (const std::exception& e) {
-				std::this_thread::sleep_for(std::chrono::milliseconds(this->i2c_retry_time));
-				std::cerr << "Error writing word attempt " << i << ": " << e.what() << std::endl;
-				continue;
-			}
-		}
-
-		throw std::runtime_error("Failed to write word via i2c.");
-	};
-
-	/*
-	Read a byte of data from the PanTilt HAT.
-	@param address	- integer register address to read from.
-	@returns		- an integer of the data.
-	*/
-	int PanTilt::i2c_read_byte(int address) {
-		// Try up to a certain number of times to read from device.
-		for (int i = 0; i < this->i2c_retries; i++) {
-			try {
-				int r = this->read_8bit(address);
-				return r;
-			}
-			catch (const std::exception& e) {
-				std::this_thread::sleep_for(std::chrono::milliseconds(this->i2c_retry_time));
-				std::cerr << "Error reading byte attempt " << i << ": " << e.what() << std::endl;
-				continue;
-			}
-		}
-
-		throw std::runtime_error("Failed to read byte via i2c.");
-		return 0;
-	};
-
-	/*
-	Read a word of data from the PanTilt HAT.
-	@param address	- integer register address to read from.
-	@returns		- an integer of the data.
-	*/
-	int PanTilt::i2c_read_word(int address) {
-		// Try up to a certain number of times to read from device.
-		for (int i = 0; i < this->i2c_retries; i++) {
-			try {
-				int r = this->read_16bit(address);
-				return r;
-			}
-			catch (const std::exception& e) {
-				std::this_thread::sleep_for(std::chrono::milliseconds(this->i2c_retry_time));
-				std::cerr << "Error reading word attempt " << i << ": " << e.what() << std::endl;
-				continue;
-			}
-		}
-
-		throw std::runtime_error("Failed to read word via i2c.");
-		return 0;
 	};
 
 	/*
