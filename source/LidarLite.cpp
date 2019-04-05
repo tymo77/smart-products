@@ -6,16 +6,22 @@
 #include <exception>
 #include <stdlib.h>
 #include <iostream>
+#include <iomanip>			// set base cstream
 
 #include <thread>         // std::this_thread::sleep_for, std::thread
 #include <chrono>         // std::chrono::seconds
+#include <cmath>
 
 
 namespace sp {
 
 	LidarLite::LidarLite() : I2C::I2C(LidarLite::DEF_I2C_ADDRESS) {
 
-		enable_reciever_bias_correction(true);
+		enable_receiver_bias_correction(true);
+		wait_timeout = 200;//Milliseconds?
+		this->read_delay = 15;
+		this->write_delay = 0;
+		this->reset_settings();
 
 	};
 
@@ -26,11 +32,26 @@ namespace sp {
 	*/
 	void LidarLite::set_i2c_address(int new_address) {
 		
+		std::cerr << "CAUTION: CHANGING THE I2C ADDRESS IS CURRENTLY UNSTABLE" << std::endl;
+		std::cout << "Changing i2c address of LidarLite device to 0x" << std::setbase(16) << new_address << std::setbase(10) << std::endl;
+		
+		
 		try {
 			
+			
+			if(new_address % 2 == 1){
+				throw std::runtime_error("Least significant bit for this device must be 0.");
+			}
+			if(new_address > 0x77 || new_address < 0x04){
+				throw std::runtime_error("Address must be a valid i2c address.");
+			}
+			
 			// 1) Read the two-byte serial number.
-			int sn_high = this->resilient_read_8bit(LidarLite::REG_UNIT_ID_HIGH);
-			int sn_low = this->resilient_read_8bit(LidarLite::REG_UNIT_ID_LOW);
+			this->write_8bit(LidarLite::REG_UNIT_ID_HIGH);
+			int sn_high = this->read_8bit();
+			
+			this->write_8bit(LidarLite::REG_UNIT_ID_LOW);
+			int sn_low = this->read_8bit();
 
 			// 2) Write the serial number high byte.
 			this->resilient_write_8bit(LidarLite::REG_I2C_ID_HIGH, sn_high);
@@ -42,14 +63,14 @@ namespace sp {
 			this->resilient_write_8bit(LidarLite::REG_I2C_SEC_ADDR, new_address);
 
 			// 5) Disable the default i2c address.
-			this->resilient_write_8bit(LidarLite::REG_I2C_CONFIG, 8);
+			this->resilient_write_8bit(LidarLite::REG_I2C_CONFIG, 0x08);
 
 			// Setup new address on the Pi side.
 			this->i2c_address = new_address;
 			this->setup_i2c();
 		}
 		catch(const std::exception & e){
-			std::cerr << "Failed to set new address: " e.what() << std::endl;
+			std::cerr << "Failed to set new address: " << e.what() << std::endl;
 			std::cerr << "You may have to cycle the power to the Lidar module." << std::endl;
 		}
 	};
@@ -63,26 +84,49 @@ namespace sp {
 	*/
 	int LidarLite::measure_dist() {
 
-		// Get start time for measuring time elapsed and timing out.
-		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-
-		// Wait until it is in ready state.
-		while ((this->resilient_read_8bit(REG_STATUS) & 1) > 0) {
-			// End program after idle timeout seconds.
-			std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-			std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(now - begin);
-			if (time_span.count() > (double) this->idle_timeout) {
-				throw std::runtime_error("LidarLite: busy flag did not enter ready state before timeout.");
-				return -1;
+		//~ // Get start time for measuring time elapsed and timing out.
+		//~ std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+		
+		if(not free_running){
+			if(bias_correct){
+				this->write_8bit(LidarLite::REG_ACQ_COMMAND,0x04);
+				}
+			else{
+				this->write_8bit(LidarLite::REG_ACQ_COMMAND,0x03);
 			}
+					
 		}
 
-		//int both_byte = this->i2c_read_16bit(REG_FULL_DELAY_BOTH);
 
-		int high_byte = this->resilient_read_8bit(REG_FULL_DELAY_HIGH);
-		int low_byte = this->resilient_read_8bit(REG_FULL_DELAY_LOW);
+		// Read high byte
+		this->write_8bit(REG_FULL_DELAY_HIGH);
+		uint16_t high_byte = this->read_8bit();
+		//~ std::cout << "High = " << high_byte;
+		
+		// Read low bye
+		this->write_8bit(REG_FULL_DELAY_LOW);
+		uint16_t low_byte = this->read_8bit();
+		//~ std::cout << ", Low = " << low_byte << std::endl;
+		
+		
+		//~ return both_byte;
+		return low_byte | (high_byte << 8);
+	};
+	
+	/*
+	Measure Lidar velocity.
+	@returns 	- integer velocity in cm/s.
 
-		return low_byte + 2 ^ 8 * high_byte;
+	*/
+	int LidarLite::measure_velocity() {
+
+		
+		// Read low bye
+		this->write_8bit(REG_VELOCITY);
+		int8_t vel = this->read_8bit();
+		
+		//convert from .1m/s to cm/s;
+		return int(vel)*100;
 	};
 
 	/*
@@ -90,13 +134,44 @@ namespace sp {
 	@param 	enable - boolean true/false for whether to enable the receiever bias correction algorithm.
 
 	*/
-	void LidarLite::enable_reciever_bias_correction(bool enable) {
+	void LidarLite::enable_receiver_bias_correction(bool enable) {
 		if (enable) {
-			this->resilient_write_8bit(LidarLite::REG_ACQ_COMMAND, 4);
+			this->write_8bit(LidarLite::REG_ACQ_COMMAND, 0x04);
 		}
 		else {
-			this->resilient_write_8bit(LidarLite::REG_ACQ_COMMAND, 3);
+			this->write_8bit(LidarLite::REG_ACQ_COMMAND, 0x03);
 		}
+		this->bias_correct = enable;
+	};
+	
+	/*
+	Enable/disable free running measurement mode at 10hz.
+	@param 	enable - boolean true/false.
+
+	*/
+	void LidarLite::enable_free_running(bool enable){
+		if (enable) {
+			this->write_8bit(LidarLite::REG_OUTER_LOOP_COUNT, 0xff);
+		}
+		else {
+			this->write_8bit(LidarLite::REG_OUTER_LOOP_COUNT, this->measurements_per_cmd);
+		}
+		free_running = enable;
+		if (this->bias_correct) {
+			this->write_8bit(LidarLite::REG_ACQ_COMMAND, 0x04);
+		}
+		else {
+			this->write_8bit(LidarLite::REG_ACQ_COMMAND, 0x03);
+		}
+	}
+	
+	/*
+		Set the number of measurements to be taken per command
+		@param count - new integer number of measurements taken per command 0 corresponds to 1.
+	*/
+	void LidarLite::set_measurements_per_cmd(int count){
+		this->write_8bit(LidarLite::REG_OUTER_LOOP_COUNT,count);
+		this->measurements_per_cmd = count;
 	};
 
 	/*

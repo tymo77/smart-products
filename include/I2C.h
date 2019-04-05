@@ -6,7 +6,7 @@ namespace sp {
 	C++ class that wraps the wiringPi I2C functions.
 	*/
 	class I2C {
-	private:
+	protected:
 		
 		int fd;
 		int i2c_address;

@@ -36,6 +36,7 @@ namespace sp {
 	public:
 		// Configuration
 		PanTilt();
+		~PanTilt();
 		void setup();
 		void set_config();
 		void set_idle_timeout(int);

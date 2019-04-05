@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <exception>
 #include <stdlib.h>
+#include <cmath>
 #include <iostream>
 
 #include <thread>         // std::this_thread::sleep_for, std::thread
@@ -79,10 +80,10 @@ namespace sp {
 	@returns		- integer angle in degrees.
 	*/
 	int PanTilt::servo_us_to_deg(int us, int us_min, int us_max) {
-		if (us > us_min && us < us_max) {
+		if ((us >= us_min) && (us <= us_max)) {
 			int servo_range = us_max - us_min;
 			double angle = (double(us - us_min) / double(servo_range))*180.0;
-			return int(angle) - 90;
+			return int(std::round(angle)) - 90;
 		}
 		else {
 			throw std::runtime_error("Pulse width out of range.");
@@ -99,11 +100,12 @@ namespace sp {
 	@returns		- integer pulse-width in microseconds.
 	*/
 	int PanTilt::servo_deg_to_us(int angle, int us_min, int us_max) {
-		if (angle > -90 && angle < 90) {
+		if (angle >= -90 && angle <= 90) {
 			angle += 90;
 			int servo_range = us_max - us_min;
 			double us = double(servo_range) / 180.0 * double(angle);
-			return int(us) + us_min;
+
+			return int(std::round(us)) + us_min;
 		}
 		else {
 			throw std::runtime_error("Angle out of range.");
@@ -163,7 +165,7 @@ namespace sp {
 
 		try{
 			// Try to convert the pulse with to an angle.
-			return this->servo_us_to_deg(us,servo_min[index],servo_max[index]);
+			return this->servo_us_to_deg(us,servo_min[index-1],servo_max[index-1]);
 		}
 		catch (const std::exception& e){
 			// If there is an error. Report a zero.
@@ -197,12 +199,12 @@ namespace sp {
 				this->set_config();
 			}
 			reg = PanTilt::REG_SERVO2;
-			angle = std::min(angle, 20);// Don't go below 20 degrees for servo2
+			angle = std::max(angle, -55);// Don't go below -30 degrees for servo2
 		}
 		else {
 			throw std::runtime_error("Can't command servo. Bad servo index.");
 		}
-		int us = this->servo_deg_to_us(angle, servo_min[index], servo_max[index]);
+		int us = this->servo_deg_to_us(angle, servo_min[index-1], servo_max[index-1]);
 		this->resilient_write_16bit(reg, us);
 
 		// Build a thread to run the servo movement timeout timer.
@@ -219,6 +221,7 @@ namespace sp {
 	@param index	- integer index of servo to stop (1 or 2);
 	*/
 	void PanTilt::stop_servo(int index) {
+		//~ std::cout << "Stopping servo " << index << std::endl;
 		if (index == 1) {
 			this->enable_servo1 = false;
 		}
@@ -244,4 +247,9 @@ namespace sp {
 		this->stop_servo(index);
 		return;
 	};
+	
+	PanTilt::~PanTilt(){
+		this->stop_servo(1);
+		this->stop_servo(2);
+	}
 }
