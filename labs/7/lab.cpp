@@ -9,16 +9,23 @@
 #include <thread>
 #include <chrono>
 
+#include <exception>
+#include <stdexcept>
+
 #include <vector>
+#include <algorithm>
 
 #include <cmath>
 
 #define TWIST_START 	-90
 #define TWIST_END		0
-#define TWIST_INC 	10
+#define TWIST_INC 	3
 #define ELEV_START 	-55
 #define ELEV_END		35
-#define ELEV_INC 		10
+#define ELEV_INC 		3
+
+#define NUM_SAMPLES 5 // Number of samples to take
+#define NUM_DISCARD 1 // Number of outliers to discard
 
 sp::PanTilt pantilt;
 sp::LidarLite lidar;
@@ -33,13 +40,6 @@ void move(int angle1, int angle2){
 	pantilt.set_angle(2,angle2);
 	std::this_thread::sleep_for(std::chrono::milliseconds(1100));
 	
-}
-
-void readstate(){
-	int angle1 = pantilt.get_angle(1);
-	int angle2 = pantilt.get_angle(2);
-	
-	std::cout << "Current state: (" << angle1 << "," << angle2 << ")" << std::endl;
 }
 
 std::vector<double> fwd_kin(int dist, int a1, int a2){
@@ -70,25 +70,66 @@ std::vector<double> fwd_kin(int dist, int a1, int a2){
 	return p;
 	
 }
+
+void remove_outliers(std::vector<int> & v){
 	
+	std::vector<int>::iterator min_el, max_el;
+	
+	// Erase a certain number of the highest and lowest elements
+	for(int i = 0; i < NUM_DISCARD; i++){
+		max_el = std::max_element(v.begin(),v.end());
+		v.erase(max_el);
+		
+		min_el = std::min_element(v.begin(),v.end());
+		v.erase(min_el);
+	}
+}
 
-
+int average(std::vector<int> & v){
+	
+	std::vector<int>::iterator min_el, max_el;
+	int avg = 0;
+	int count = 0;
+	
+	// Compute averages
+	for(std::vector<int>::iterator it = v.begin(); it != v.end(); ++it){
+			avg += *it;
+			count++;
+	}
+	avg /= count;
+	return avg;
+}
 
 
 int main(int argc, char * argv[]) {
 	
+	// Check validity of setup.
+	if (2*NUM_DISCARD > NUM_SAMPLES) {
+		throw std::runtime_error("Bad setup. No samples leftover after discarding outliers!!"); 
+	}
+	
+	int dist, vel, count;
 	std::vector<double> p(3);
+	std::vector<int> dists(NUM_SAMPLES);
+	std::vector<int> vels(NUM_SAMPLES);
 	
-	//output file
+	std::vector<int> dists_avg;
+	std::vector<int> vels_avg;
+	
+	// Prepare output file.
 	std::ofstream logfile;
-	logfile.open("lidar_data.log");
+	logfile.open("lidar_data.log");//Open file, clear contents, and write headers
+	logfile << "Angle 1, Angle 2, Distance (cm), Velocity (cm/s), x, y, z\n";
 	
-	
+	// Pause.
 	std::cout << " pausing " << std::endl;
 	std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+	
+	// Setup.
 	lidar.enable_free_running(true);
 	pantilt.set_idle_timeout(0);
 	
+	// Move to position if arguments provided (for testing).
 	if (argc == 3) {
 		move(std::stoi(argv[1]),std::stoi(argv[2]));
 	}
@@ -98,10 +139,24 @@ int main(int argc, char * argv[]) {
 		for(; angle1 < TWIST_END; angle1+=TWIST_INC){
 			angle2 = ELEV_START;
 			for(; angle2 < ELEV_END; angle2+=ELEV_INC){
+				logfile.open("lidar_data.log", std::ios::out | std::ios::app);//Open file as append output
 				move(angle1,angle2);
-				int dist = lidar.measure_dist();
-				int vel = lidar.measure_velocity();
 				
+				dists_avg.clear(); vels_avg.clear();
+				// Get a certain number of samples
+				for(int i = 0; i < NUM_SAMPLES; i++){
+					dists[i] = lidar.measure_dist();
+					vels[i] = lidar.measure_velocity();
+					std::this_thread::sleep_for(std::chrono::milliseconds(150));
+				}
+				dists_avg = dists;
+				vels_avg = vels;
+					
+				remove_outliers(dists_avg);
+				remove_outliers(vels_avg);
+				
+				dist = average(dists_avg);
+				vel = average(vels_avg);
 				
 				p = fwd_kin(dist, angle1, angle2);
 				
@@ -112,7 +167,7 @@ int main(int argc, char * argv[]) {
 				
 				// Output to terminal
 				std::cout << dist << " cm " << vel << " cm/s" << std::endl; // Read distance
-				
+				logfile.close();// Close and write file.
 				
 			}
 		}

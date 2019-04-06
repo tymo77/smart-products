@@ -19,7 +19,7 @@ namespace sp {
 
 		enable_receiver_bias_correction(true);
 		wait_timeout = 200;//Milliseconds?
-		this->read_delay = 15;
+		this->read_delay = 25;
 		this->write_delay = 0;
 		this->reset_settings();
 
