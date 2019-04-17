@@ -73,6 +73,7 @@ public:
 	Kinematics				gKinematics;
 	WAITCmd					gWAITCmd;
 	bool					suction;
+
 	//==========================================
 	//				METHODS
 	//==========================================

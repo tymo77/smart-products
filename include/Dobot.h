@@ -17,16 +17,30 @@
 #include "Robot.h"
 #include <functional>
 
-class Dobot : public Robot
-{
-public:
-	std::function<void(Dobot&)> mRoutine;
-};
+namespace sp{
 
-void RobotRoutine(Dobot &bot)
-{
+	class Dobot : public Robot{
+		
+	public:
+		Dobot();
+		void goTo(double x, double y, double z);
+		void printPose();
+		void setRamp1();
+		void setRamp2();
+		void setHome();
+		void goHome();
+		void goRamp1();
+		void goRamp2();
+		void getReferences();
+		void saveReferences();
+		void loadReferences();
+		
+	private:
+		int fd;
+		double p_home[3];
+		double p_ramp1[3];
+		double p_ramp2[3];
+	};
 
-		return;	
 }
-
 #endif
