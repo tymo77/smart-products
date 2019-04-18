@@ -522,15 +522,17 @@ namespace sp {
 	*/
 	MatF_t multm(MatF_t mat_a, MatF_t mat_b){
 		
+		mat_b = transposem(mat_b);
+		
 		// Get sizes from matrices.
 		unsigned int a_Nrows = mat_a.size();
 		unsigned int b_Nrows = mat_b.size();
-		mat_b = transposem(mat_b);
 		unsigned int a_Ncols = mat_a[0].size();
 		unsigned int b_Ncols = mat_b[0].size();
-
+		
+		
 		// Test that the matrices are of the same dimensions.
-		if ( a_Nrows != b_Nrows || a_Ncols != b_Ncols){
+		if (a_Ncols != b_Ncols){
 			throw std::runtime_error("multm(): Cannot multiply without matching dimensions!");
 		}
 

@@ -16,6 +16,7 @@
 #include "../../include/Robot.h"
 #include "../../include/LidarLite.h"
 #include "../../include/CameraCom.h"
+#include "../../include/command.h"
 
 #define RED 	1
 #define GREEN  2
@@ -26,6 +27,7 @@
 #define POS_START 1
 #define POS_1		2
 #define POS_2		3
+#define R_ball 	21.0185
 
 //Set Serial TX&RX Buffer Size
 #define SERIAL_TX_BUFFER_SIZE 64
@@ -34,7 +36,7 @@
 int fd = serialOpen( UART_PATH, BAUD_RATE);// Dobot
 
 sp::Dobot bot;
-sp::CameraCom cam(2);//2 Second timeout.
+sp::CameraCom cam(2,-8.8 - R_ball);//2 Second timeout.
 
 
 
@@ -72,24 +74,35 @@ int main(int argc, char* argv[]){
 		return 1;
 	}
 	
-	//~ std::vector<Target> targets = cam.get_targets(min_radius,max_radius,color_index,method_index,pos_index);
 	
-	std::cout << "Getting red balls..." << std::endl;
-	std::vector<sp::Target> targets = cam.get_targets(10,30,RED,CIRC,POS_2);
-	//~ std::cout << "Getting red balls..." << std::endl;
-	//~ std::vector<sp::Target> targets2 = cam.get_targets(10,30,RED,BLOB,POS_1);
 	
 	// Go places.
-	//~ bot.goHome();
+	bot.goHome();
 	//~ bot.goRamp1();
 	//~ bot.goHome();
 	//~ bot.goRamp2();
+	//~ bot.goHome();
+	std::cout << "Getting red balls..." << std::endl;
+	std::vector<sp::Target> targets;
+	std::vector<double> target_pos;
+	for(int i = 0; i < 5; i++){
+		targets = cam.get_targets(10,30,RED,BLOB,POS_START);
+		if(targets.size() > 0){
+			target_pos = cam.cam2world(targets[0],bot.getPose());
+			std::cout << "(" << targets[0].x << "," << targets[0].y << ")" << "->" << "(" << target_pos[0] << "," << target_pos[1] << "," << target_pos[2] << ")" << std::endl;
+			
+			std::cout << "Moving to target..." << std::endl;
+			bot.goTo(target_pos[0],target_pos[1],target_pos[2] + 40 + R_ball);//Position 2
+		}
+		else {
+		std::cout << "None found" << std::endl;
+		}
+	}
 	
-}   
-
-
-
-
-
-
-
+	bot.goTo(target_pos[0] - 8.0,target_pos[1],target_pos[2] + R_ball - 14.0);//Pick
+	bot.suctionOn();
+	bot.goHome();
+	bot.goRamp1();
+	bot.suctionOff();
+	bot.goHome();
+}

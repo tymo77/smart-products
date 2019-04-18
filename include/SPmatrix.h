@@ -28,9 +28,9 @@ namespace sp {
 		MatF(const MatF_t);
 
 		// Getters
-		inline MatF_t getMatData() const;
-		inline int getNRows() const;
-		inline int getNCols() const;
+		inline MatF_t getMatData() const { return mat_data_; }
+		inline int getNRows() const { return n_rows_; }
+		inline int getNCols() const { return n_cols_; }
 
 		// Self operations
 		MatF inv();

@@ -1,4 +1,4 @@
-objects = Message.o Packet.o Protocol.o RingBuffer.o Robot.o command.o LidarLite.o I2C.o Dobot.o CameraCom.o
+objects = Message.o Packet.o Protocol.o RingBuffer.o Robot.o command.o LidarLite.o I2C.o Dobot.o CameraCom.o SPmath.o SPmatrix.o
 INC = ../../include/
 SRC = ../../source/
 MESSAGE = $(INC)Message.h $(SRC)Message.cpp
@@ -12,6 +12,8 @@ CAMERACOM = $(INC)CameraCom.h $(SRC)CameraCom.cpp
 #PANTILT = $(INC)PanTilt.h $(SRC)PanTilt.cpp
 LIDARLITE = $(INC)LidarLite.h $(SRC)LidarLite.cpp
 I2C = $(INC)I2C.h $(SRC)I2C.cpp
+SPmath = $(SRC)SPmath.cpp $(INC)SPmath.h
+SPmatrix = $(SRC)SPmatrix.cpp $(INC)SPmatrix.h
 
 main : $(objects)
 	g++ -o main.out main.cpp $(objects) -lwiringPi
@@ -45,6 +47,12 @@ CameraCom.o : $(CAMERACOM)
 	
 I2C.o: $(I2C)
 	g++ -c $(I2C)
+
+SPmath.o : $(SPmath)
+	g++ -c $(SPmath)
+
+SPmatrix.o : $(SPmatrix) $(SPmath)
+	g++ -c $(SPmatrix)
 
 .PHONY : clean
 clean :

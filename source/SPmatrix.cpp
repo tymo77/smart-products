@@ -21,11 +21,7 @@ namespace sp {
 			n_rows_ = m.size();
 			n_cols_ = m[0].size();
 		}
-
-	// Getters
-		inline MatF_t MatF::getMatData() const { return mat_data_; }
-		inline int MatF::getNRows() const { return n_rows_; }
-		inline int MatF::getNCols() const { return n_cols_; }
+		
 
 	// Self-operations
 		MatF MatF::inv() {
