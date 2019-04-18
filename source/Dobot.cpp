@@ -16,6 +16,14 @@ namespace sp{
 		this->goToXYZ(x,y,z,true);
 	}
 	
+	void Dobot::suctionOff(){
+		this->setPump(false,true);
+	}
+	
+	void Dobot::suctionOn(){
+		this->setPump(true,true);
+	}
+	
 	void Dobot::printPose(){
 		Pose pose = this->getPose();
 		printf("at position x =  % 7.2f y = % 7.2f z = % 7.2f r = % 7.2f\n",pose.x,pose.y,pose.z,pose.r);
@@ -41,7 +49,7 @@ namespace sp{
 	}
 	
 	void Dobot::getReferences(){
-		std::cout << "Record home position. Move to desired position and press ENTER." << std::endl;
+		std::cout << "Record home position. The camera should be able to see the whole grid.\n Move to desired position and press ENTER." << std::endl;
 		cin.get();
 		this->setHome();
 		std::cout << "Record ramp1 position. Move to desired position and press ENTER." << std::endl;

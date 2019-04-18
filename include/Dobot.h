@@ -34,6 +34,8 @@ namespace sp{
 		void getReferences();
 		void saveReferences();
 		void loadReferences();
+		void suctionOff();
+		void suctionOn();
 		
 	private:
 		int fd;

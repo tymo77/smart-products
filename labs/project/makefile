@@ -1,4 +1,4 @@
-objects = Message.o Packet.o Protocol.o RingBuffer.o Robot.o command.o LidarLite.o I2C.o Dobot.o
+objects = Message.o Packet.o Protocol.o RingBuffer.o Robot.o command.o LidarLite.o I2C.o Dobot.o CameraCom.o
 INC = ../../include/
 SRC = ../../source/
 MESSAGE = $(INC)Message.h $(SRC)Message.cpp
@@ -8,6 +8,7 @@ RINGBUFFER = $(INC)RingBuffer.h $(SRC)RingBuffer.cpp
 ROBOT = $(INC)Robot.h $(SRC)Robot.cpp
 DOBOT = $(INC)Dobot.h $(SRC)Dobot.cpp
 COMMAND = $(INC)command.h $(SRC)command.cpp
+CAMERACOM = $(INC)CameraCom.h $(SRC)CameraCom.cpp
 #PANTILT = $(INC)PanTilt.h $(SRC)PanTilt.cpp
 LIDARLITE = $(INC)LidarLite.h $(SRC)LidarLite.cpp
 I2C = $(INC)I2C.h $(SRC)I2C.cpp
@@ -38,6 +39,9 @@ Message.o : $(MESSAGE)
 	
 LidarLite.o : $(LIDARLITE) I2C.o
 	g++ -c $(LIDARLITE)
+	
+CameraCom.o : $(CAMERACOM)
+	g++ -c $(CAMERACOM)
 	
 I2C.o: $(I2C)
 	g++ -c $(I2C)
