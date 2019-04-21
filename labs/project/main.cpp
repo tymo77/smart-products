@@ -74,35 +74,87 @@ int main(int argc, char* argv[]){
 		return 1;
 	}
 	
-	
-	
-	// Go places.
-	bot.goHome();
-	//~ bot.goRamp1();
-	//~ bot.goHome();
-	//~ bot.goRamp2();
-	//~ bot.goHome();
-	std::cout << "Getting red balls..." << std::endl;
-	std::vector<sp::Target> targets;
-	std::vector<double> target_pos;
-	for(int i = 0; i < 5; i++){
+	// Pick red balls -> Ramp 1
+	while(true){
+		// Go places.
+		bot.goHome();
+		std::cout << "Getting red balls..." << std::endl;
+		std::vector<sp::Target> targets;
+		std::vector<double> target_pos;
+		
 		targets = cam.get_targets(10,30,RED,BLOB,POS_START);
 		if(targets.size() > 0){
 			target_pos = cam.cam2world(targets[0],bot.getPose());
-			std::cout << "(" << targets[0].x << "," << targets[0].y << ")" << "->" << "(" << target_pos[0] << "," << target_pos[1] << "," << target_pos[2] << ")" << std::endl;
-			
+			std::cout << "(" << targets[0].x << "," << targets[0].y << ")" << "->" << "(" << target_pos[0] << "," << target_pos[1] << "," << target_pos[2] << ")" << std::endl;	
 			std::cout << "Moving to target..." << std::endl;
 			bot.goTo(target_pos[0],target_pos[1],target_pos[2] + 40 + R_ball);//Position 2
 		}
 		else {
-		std::cout << "None found" << std::endl;
+			std::cout << "None found" << std::endl;
+			break;
 		}
+		
+		for(int i = 0; i < 5; i++){
+			targets = cam.get_targets(10,30,RED,BLOB,POS_START);
+			if(targets.size() > 0){
+				target_pos = cam.cam2world(targets[0],bot.getPose());
+				std::cout << "(" << targets[0].x << "," << targets[0].y << ")" << "->" << "(" << target_pos[0] << "," << target_pos[1] << "," << target_pos[2] << ")" << std::endl;
+				
+				std::cout << "Moving to target..." << std::endl;
+				bot.goTo(target_pos[0],target_pos[1],target_pos[2] + 40 + R_ball);//Position 2
+			}
+			else {
+				std::cout << "None found" << std::endl;
+			}
+		}
+		
+		bot.goTo(target_pos[0] - 8.0,target_pos[1],target_pos[2] + R_ball - 14.0);//Pick
+		bot.suctionOn();
+		bot.goHome();
+		bot.goRamp1();
+		bot.suctionOff();
+		bot.goHome();
 	}
 	
-	bot.goTo(target_pos[0] - 8.0,target_pos[1],target_pos[2] + R_ball - 14.0);//Pick
-	bot.suctionOn();
-	bot.goHome();
-	bot.goRamp1();
-	bot.suctionOff();
-	bot.goHome();
+	// Pick green balls -> Ramp 2
+	while(true){
+		// Go places.
+		bot.goHome();
+		std::cout << "Getting green balls..." << std::endl;
+		std::vector<sp::Target> targets;
+		std::vector<double> target_pos;
+		
+		targets = cam.get_targets(10,30,GREEN,BLOB,POS_START);
+		if(targets.size() > 0){
+			target_pos = cam.cam2world(targets[0],bot.getPose());
+			std::cout << "(" << targets[0].x << "," << targets[0].y << ")" << "->" << "(" << target_pos[0] << "," << target_pos[1] << "," << target_pos[2] << ")" << std::endl;	
+			std::cout << "Moving to target..." << std::endl;
+			bot.goTo(target_pos[0],target_pos[1],target_pos[2] + 40 + R_ball);//Position 2
+		}
+		else {
+			std::cout << "None found" << std::endl;
+			break;
+		}
+		
+		for(int i = 0; i < 5; i++){
+			targets = cam.get_targets(10,30,GREEN,BLOB,POS_START);
+			if(targets.size() > 0){
+				target_pos = cam.cam2world(targets[0],bot.getPose());
+				std::cout << "(" << targets[0].x << "," << targets[0].y << ")" << "->" << "(" << target_pos[0] << "," << target_pos[1] << "," << target_pos[2] << ")" << std::endl;
+				
+				std::cout << "Moving to target..." << std::endl;
+				bot.goTo(target_pos[0],target_pos[1],target_pos[2] + 40 + R_ball);//Position 2
+			}
+			else {
+				std::cout << "None found" << std::endl;
+			}
+		}
+		
+		bot.goTo(target_pos[0] - 8.0,target_pos[1],target_pos[2] + R_ball - 14.0);//Pick
+		bot.suctionOn();
+		bot.goHome();
+		bot.goRamp2();
+		bot.suctionOff();
+		bot.goHome();
+	}
 }
