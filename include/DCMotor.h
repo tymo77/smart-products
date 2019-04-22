@@ -24,9 +24,9 @@ https://pi-plates.com/wp-content/uploads/2015/04/TB6612FNG.pdf
 #include <stdlib.h>
 #include <stdint.h>
 #include <unistd.h>
-#include<sstream>
-#include<fstream>
-#include<cstring>
+#include <sstream>
+#include <fstream>
+#include <cstring>
 #include <string.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -40,8 +40,9 @@ https://pi-plates.com/wp-content/uploads/2015/04/TB6612FNG.pdf
 #include <sys/ioctl.h>
 #include <deque>
 #include "SPI_Slave.h"
-#include"GPIO.h"
-#include"MotorPlate.h"
+#include "mySPGPIO.h"
+#include "SPGPIO.h"
+#include "MotorPlate.h"
 
 //	Motor Params
 #define PPR						1120.0

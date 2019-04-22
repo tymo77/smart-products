@@ -7,13 +7,14 @@
 	@date 		3/25/2018
 	@version	1.0.0
 **********************************************************************************************************/
-#include "GPIO.h"
-#include "SPI_Slave.h"
-#include "DCMotor.h"
+#include "../include/SPGPIO.h"
+#include "../include/mySPGPIO.h"
+#include "../include/SPI_Slave.h"
+#include "../include/DCMotor.h"
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include<math.h>
+#include <math.h>
 #include <chrono>
 #include <ctime>
 
@@ -130,20 +131,22 @@ float DCMotor::reference(float time)
 
 float DCMotor::readSpeed()
 {
-	auto SA = MotorPlate::GPIO::digitalRead(this->pin_enA );
-	auto SB = MotorPlate::GPIO::digitalRead(this->pin_enB );
+	//~ auto SA = MotorPlate::GPIO::digitalRead(this->pin_enA );
+	//~ auto SB = MotorPlate::GPIO::digitalRead(this->pin_enB );
+	auto SA = MyGPIO::digitalRead(this->pin_enA );
+	auto SB = MyGPIO::digitalRead(this->pin_enB );
 	//std::cout<< SA<<SB<<std::endl;
 	float t_begin_to = DCMotor::time();
-	while( (MotorPlate::GPIO::digitalRead(this->pin_enA ) == SA) || (MotorPlate::GPIO::digitalRead(this->pin_enB ) == SB))
+	while( (MotorPlate::MyGPIO::digitalRead(this->pin_enA ) == SA) || (MotorPlate::MyGPIO::digitalRead(this->pin_enB ) == SB))
 		 {
 		 	//std::cout<<"StateA: "<<MotorPlate::GPIO::digitalRead(this->pin_enA ) <<std::endl;
 		 	//std::cout<<"StateB: "<<MotorPlate::GPIO::digitalRead(this->pin_enB ) <<std::endl;
 		 	if ((DCMotor::time()-t_begin_to)>this->Ts) {return 0.0;}
 		 }
 	float t_initial = DCMotor::time();
-	SA = MotorPlate::GPIO::digitalRead(this->pin_enA );
-	SB= MotorPlate::GPIO::digitalRead(this->pin_enB );
-	while( (MotorPlate::GPIO::digitalRead(this->pin_enA ) == SA) && (MotorPlate::GPIO::digitalRead(this->pin_enB ) ==SB)) {}
+	SA = MotorPlate::MyGPIO::digitalRead(this->pin_enA );
+	SB= MotorPlate::MyGPIO::digitalRead(this->pin_enB );
+	while( (MotorPlate::MyGPIO::digitalRead(this->pin_enA ) == SA) && (MotorPlate::MyGPIO::digitalRead(this->pin_enB ) ==SB)) {}
 	float t_final = DCMotor::time();
 	float dt = t_final-t_initial; // time for one pulse  .... s/pulse
 	// w = deg/s     PPR = pulse/rev    dt  = s/pulse     PPR*dt = s/rev

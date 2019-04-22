@@ -1,48 +1,18 @@
-/**
-//====================================================================
-//                  	lab4_main.cpp
-//====================================================================
-
-	_description: This is the header file to control the robotic arm, Dobot Magician, 
-		using the raspberry pi 3. We connect the RPi to the Dobot using the usb cable
-		that comes with the Dobot. Utilizing the communication protocol of developed
-		by the Dobot company, we will package the different commands and setup
-		procedure into a more compact and usable class called Robot. Make sure 
-		have installed the wiringPi library. To connect 
-		with the Dobot, all you need to do is 
-			1. turn off the Dobot
-			2. Plug in the USB 3 cable to the Pi and the Dobot.
-			3. Turn on the Dobot. 
-			4. Wait about 30 seconds perform trying to run any programs
-			5. Begin your program.
-
-===============To compile enter the following command ================
-sudo g++ -o test2  main_test2.cpp Message.h Message.cpp  Packet.h Packet.cpp ProtocolDef.h Protocol.h Protocol.cpp ProtocolID.h RingBuffer.h RingBuffer.cpp Robot.h Robot.cpp command.h command.cpp -lwiringPi
-========================References===============================
-	https://www.dobot.cc/dobot-magician/specification.html
-	https://www.dobot.cc/download/dobot-communication-protocol-v1-0-4/
-	https://www.dobot.cc/download/dobot-magician-api-v1-1-1/
-=================================================================
-	@author 		Dylan DeSantis
-	@date		2/16/2018
-	@version	1.0.0
-*/
-
 //#include <iostream>
 //#include <stdio.h>
 //#include <stdlib.h>
-//#include<string.h>        
-//#include<errno.h>
-//#include<math.h>
-//#include<signal.h>
-//#include<unistd.h>
+//#include <string.h>        
+//#include <errno.h>
+//#include <math.h>
+//#include <signal.h>
+//#include <unistd.h>
 //#ifndef WPi
 //#define WPi
 //#include <wiringPiI2C.h>
 //#include <wiringPi.h>
 //#include <wiringSerial.h>
 //#endif
-//#include"ServoHat.h"
+//#include "ServoHat.h"
 //#include "GPIO.h"
 //#include "LidarLite.h"
 //#include "MotorPlate.h"
@@ -56,31 +26,33 @@ sudo g++ -o test2  main_test2.cpp Message.h Message.cpp  Packet.h Packet.cpp Pro
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include<math.h>
+#include <math.h>
 #ifndef WPi
 #define WPi
 #include <wiringPiI2C.h>
-#include <wiringPi.h>
+//~ #include <wiringPi.h>
 #include <wiringSerial.h>
 #endif
-#include "ServoHat.h"
-#include "myGPIO.h"
-#include "LidarLite.h"
-#include "SPI_Slave.h"
-#include "DCMotor.h"
-#include "Robot.h"
-#include "Camera.h"
+#include "../../include/I2C.h"
+#include "../../include/SPGPIO.h"
+#include "../../include/mySPGPIO.h"
+#include "../../include/ServoHat.h"
+#include "../../include/LidarLite.h"
+#include "../../include/SPI_Slave.h"
+#include "../../include/DCMotor.h"
+#include "../../include/Robot.h"
+#include "../../include/CameraCom.h"
 
 //Set Serial TX&RX Buffer Size
 #define SERIAL_TX_BUFFER_SIZE 64
 #define SERIAL_RX_BUFFER_SIZE 256
 
-//extern int fd;
+extern int fd;
 
-//int fd=serialOpen( "/dev/ttyUSB0",BAUD_RATE);
+int fd=serialOpen( "/dev/ttyUSB0",BAUD_RATE);
 
-void UpToLevel(float, DCMotor&, LidarLite&);
-void DownToLevel(float, DCMotor&, LidarLite&);
+//~ void UpToLevel(float, DCMotor&, LidarLite&);
+//~ void DownToLevel(float, DCMotor&, LidarLite&);
 
 void openStageGates(ServoHat &SH,float , float);
 void closeStageGates(ServoHat &SH,float , float);
@@ -140,11 +112,15 @@ int main(int argc,char *argv[] ) {
 	//LL.connect();
 	//LL.reset();
 	//usleep(1000);
-	sp::LidarLite LL;
-	int i2c1_fd = LL.get_fd();
-	usleep(1000);
+	
+	
+	//sp::LidarLite LL;
+	//int i2c1_fd = LL.get_fd();
+	//~ usleep(1000);
 
 	//Servos
+	sp::I2C _i2c(0x05);
+	int i2c1_fd = _i2c.get_fd();
 	ServoHat SH(i2c1_fd);//using same fd to share i2c bus
 	SH.setupServo();
 	usleep(1000);
@@ -166,15 +142,15 @@ int main(int argc,char *argv[] ) {
       	openStageGates(SH,ang00,ang10);
       	usleep(4000000);
       	closeStageGates(SH,ang01,ang11);
-      	UpToLevel( level1_height, motor, LL);
+      	//~ UpToLevel( level1_height, motor, LL);
       	openLeftGate(SH,ang20);
       	usleep(4000000);
       	closeLeftGate(SH,ang21);
-      	UpToLevel( level2_height, motor, LL);
+      	//~ UpToLevel( level2_height, motor, LL);
       	openRightGate(SH,ang30);
       	usleep(4000000);
       	closeRightGate(SH,ang31);
-      	DownToLevel( platform_height, motor, LL);
+      	//~ DownToLevel( platform_height, motor, LL);
 	motor.stopDCMotor();
       	
 	usleep(1000000);

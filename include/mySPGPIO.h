@@ -12,8 +12,6 @@
 #include <vector>
 #include <stdio.h>
 
-#include "SPmath.h"
-#include "SPmatrix.h"
 #include "SPGPIO.h"
 
 namespace sp {

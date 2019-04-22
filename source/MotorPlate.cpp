@@ -7,17 +7,19 @@
 	@date 		3/25/2018
 	@version	1.0.0
 **********************************************************************************************************/
-#include "MotorPlate.h"
-#include "SPI_Slave.h"
+#include "../include/MotorPlate.h"
+//#include "../include/SPI_Slave.h"
+//#include "../include/SPGPIO.h"
+//#include "../include/mySPGPIO.h"
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include<math.h>
+#include <math.h>
 int MotorPlate::setup()
 {
 	SPI_Slave::spiBegin();
-	GPIO::pinMode(PIN_FRAME, GPIO::PinModes::OUTPUT);
-	GPIO::pinMode(PIN_INT, GPIO::PinModes::INPUT);
+	MyGPIO::pinMode(PIN_FRAME, GPIO::PinModes::OUTPUT);
+	MyGPIO::pinMode(PIN_INT, GPIO::PinModes::INPUT);
 	return 0;
 }
 
@@ -44,7 +46,7 @@ int MotorPlate::sendCMD(PLATE_ADDR addr, uint8_t cmd, uint8_t param1, uint8_t pa
 	unsigned int rx_lens_1[1] = {0};
 	
 	SPI_Slave::spiPutBlkCmds(rx_lens_1, tx_lens_1, cmds, 4, 1);
-	GPIO::digitalWrite(PIN_FRAME, GPIO::DigitalOut::HIGH);
+	MyGPIO::digitalWrite(PIN_FRAME, GPIO::DigitalOut::HIGH);
 	SPI_Slave::spiTransfer(32, 32, SEQ, 300000, 60);
 	SPI_Slave::spiDelay(100, uS);
 	SPI_Slave::spiClearQueues();
@@ -61,7 +63,7 @@ int MotorPlate::sendCMD(PLATE_ADDR addr, uint8_t cmd, uint8_t param1, uint8_t pa
 	}
 	SPI_Slave::spiClearQueues();
 	SPI_Slave::spiDelay(1, mS);
-	GPIO::digitalWrite(PIN_FRAME, GPIO::DigitalOut::LOW);
+	MyGPIO::digitalWrite(PIN_FRAME, GPIO::DigitalOut::LOW);
 	return 0;
 }
 

@@ -38,6 +38,7 @@ https://pi-plates.com/wp-content/uploads/2015/04/TB6612FNG.pdf
 #include <deque>
 #include "SPI_Slave.h"
 #include "mySPGPIO.h"
+#include "SPGPIO.h"
 
 //	Board Absolutes
 #define MAX_PLATE_ADDR		8
@@ -49,21 +50,21 @@ https://pi-plates.com/wp-content/uploads/2015/04/TB6612FNG.pdf
 //	Board Configurations
 #define MOTOR_BASE_ADDR		16
 #define PIN_FRAME				25		//	 OUTPUT
-#define PIN_INT					22		//	INPUT
+#define PIN_INT				22		//	INPUT
 
 //	Communication Settings
-#define SPI_DEV					"/dev/spidev0.1"	//	SPI0_CS1
+#define SPI_DEV				"/dev/spidev0.1"	//	SPI0_CS1
 #define STEP_RATE_MASK		0x00FF
 #define STEP_STEP_MASK		0xFF
-#define STEP_RES_SHIFT			4		//	shift resolution left (res <<4)
+#define STEP_RES_SHIFT		4		//	shift resolution left (res <<4)
 #define STEP_RATE_SHIFT		8		//	shift rate right (rate>>8)
 #define RESET					0x0F
 
 #define STEP_CONFIG_CMD		0x10
-#define STEP_MOVE_CMD			0x12
+#define STEP_MOVE_CMD		0x12
 #define STEP_JOG_CMD			0x14
-#define STEP_STOP_CMD			0x16
-#define STEP_RATE_CMD			0x18
+#define STEP_STOP_CMD		0x16
+#define STEP_RATE_CMD		0x18
 #define STEP_OFF_CMD			0x1E
 
 #define DC_CONFIG1_CMD		0x30
@@ -73,8 +74,8 @@ https://pi-plates.com/wp-content/uploads/2015/04/TB6612FNG.pdf
 #define DC_STOP_CMD			0x32
 
 #define GET_SENSOR_CMD		0x20
-#define GET_TACHC_CMD			0x22
-#define GET_TACHF_CMD			0x23
+#define GET_TACHC_CMD		0x22
+#define GET_TACHF_CMD		0x23
 
 typedef enum{
 	A0 = 0,
@@ -123,7 +124,7 @@ typedef enum{
 	RES_3 = 3
 } STEP_RES;
 
-class MotorPlate: public SPI_Slave, public sp::GPIO
+class MotorPlate: public SPI_Slave, public sp::MyGPIO
 {
 public:
 
@@ -164,7 +165,7 @@ public:
 	MotorPlate(int fd):
 		fd_spi(fd),
 		SPI_Slave(fd, -1, 0,  500000, 8),
-		GPIO()
+		MyGPIO()
 		{}
 	~MotorPlate() {}
 

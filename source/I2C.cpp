@@ -1,4 +1,4 @@
-#include "I2C.h"
+#include "../include/I2C.h"
 #include <wiringPiI2C.h>
 
 #include <exception>

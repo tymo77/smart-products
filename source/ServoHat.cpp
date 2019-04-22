@@ -9,8 +9,8 @@
 **********************************************************************************************************/
 
 
-#include "ServoHat.h"
-/*
+#include "../include/ServoHat.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -29,8 +29,7 @@
 #include <linux/i2c.h>
 #include <sys/ioctl.h>
 #include <wiringPiI2C.h>
-#include<math.h>
-*/
+#include <math.h>
 
 /****************************************************************************************************
 	Function Name:  read8
