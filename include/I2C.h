@@ -7,11 +7,13 @@ namespace sp {
 	*/
 	class I2C {
 	protected:
-		
+
 		int fd;
 		int i2c_address;
 
 	public:
+
+		int get_fd();
 
 		int write_delay;	// Write delay in milliseconds.
 		int read_delay;		// Read delay in milliseconds.

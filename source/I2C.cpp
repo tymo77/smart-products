@@ -1,4 +1,4 @@
-#include "../include/I2C.h"
+#include "I2C.h"
 #include <wiringPiI2C.h>
 
 #include <exception>
@@ -33,6 +33,10 @@ namespace sp {
 		setup_i2c();
 	};
 
+	int I2C::get_fd() {
+		return this->fd;
+	}
+
 	void I2C::setup_i2c() {
 		std::cout << "Setting up i2c device with device id: " << std::setbase(16);
 		std::cout << this->i2c_address << std::endl << std::setbase(10);
@@ -49,13 +53,13 @@ namespace sp {
 			std::cout << "Device setup succeeded." << std::endl;
 		}
 	};
-	
+
 	/*
 	Attempt to write a byte of int data to device.
 	@param data		- integer data to write.
 	*/
 	void I2C::write_8bit(int data) {
-		
+
 		try {
 			wiringPiI2CWrite(this->fd, data);
 			std::this_thread::sleep_for(std::chrono::microseconds(this->write_delay));
@@ -73,7 +77,7 @@ namespace sp {
 	@param data		- integer data to write.
 	*/
 	void I2C::write_8bit(int address, int data) {
-		
+
 		try {
 			wiringPiI2CWriteReg8(this->fd, address, data);
 			std::this_thread::sleep_for(std::chrono::microseconds(this->write_delay));
@@ -118,7 +122,7 @@ namespace sp {
 		}
 		return 0;
 	}
-	
+
 	/*
 	Attempt to read a byte of data from the device.
 	@returns		- an integer of the data.
@@ -156,7 +160,6 @@ namespace sp {
 	Write a byte of int data to int address on the LidarLite.
 	@param address	- integer address of register to write to
 	@param data		- integer data to write
-
 	i2c_resilient_write_8bit will attempt to write this->i2c_retries times before throwing an error.
 	*/
 	void I2C::resilient_write_8bit(int address, int data) {
@@ -180,7 +183,6 @@ namespace sp {
 	Write a word (16bit) of int data to int address on the LidarLite.
 	@param address	- integer address of register to write to.
 	@param data		- integer data to write.
-
 	i2c_resilient_write_16bit will attempt to write this->i2c_retries times before throwing an error.
 	*/
 	void I2C::resilient_write_16bit(int address, int data) {
@@ -204,7 +206,6 @@ namespace sp {
 	Read a byte of data from the LidarLite.
 	@param address	- integer register address to read from.
 	@returns		- an integer of the data.
-
 	Will try again a certain number of times if there is an error.
 	*/
 	int I2C::resilient_read_8bit(int address) {
@@ -229,7 +230,6 @@ namespace sp {
 	Read a word of data from the LidarLite.
 	@param address	- integer register address to read from.
 	@returns		- an integer of the data.
-
 	Will try again a certain number of times if there is an error.
 	*/
 	int I2C::resilient_read_16bit(int address) {
