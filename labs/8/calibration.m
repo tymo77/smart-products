@@ -193,6 +193,7 @@ hold on;
 axis equal;
 plot(imgpts(:,1),imgpts(:,2),'r.','MarkerSize',20);
 plot(proj_pts(:,1),proj_pts(:,2),'bo','MarkerSize',10,'LineWidth',3);
+legend('Selected points','Projection of 3D points');
 
 %% Test backward ray projectiong
 close all;
@@ -210,24 +211,6 @@ for i = 1:length(imgpts)
     plot3(line_pts(:,1),line_pts(:,2),line_pts(:,3),'r','LineWidth',3);
 end
 
-%% Test the two distance functions. They should be the same.
-close all;
-r_c = 10;
-p_c = imgpts(40,:);
-
-
-r_clist = linspace(1,120,100);
-d1_list = 0*r_clist;
-d2_list = d1_list;
-
-R_sphere = 20;%mm regulation ping pong ball
-for i = 1:length(r_clist)
-    d1_list(i) = dist2Sphere(p_c,r_clist(i),M,R_sphere);
-    d2_list(i) = dist2Sphere2(p_c,r_clist(i),M,R_sphere,0.001,100);
-end
-
-figure; hold on;
-plot(r_clist,(d1_list - d2_list)./d1_list*100)
 
 
 
