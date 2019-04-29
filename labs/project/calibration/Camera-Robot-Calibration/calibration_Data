@@ -1,0 +1,139 @@
+		^ x
+		|
+y		|
+<-----
+
+Green ball  at x =   290.93 y =  -78.58 z =  -11.54
+Blue ball   at x =   312.30 y =  -16.03 z =   -9.51
+Red ball    at x =   289.46 y =   50.79 z =   -8.61
+Blue ball   at x =   202.96 y =   51.61 z =   -6.99
+Yellow ball at x =   181.41 y =  -16.47 z =   -6.98
+Yellow ball at x =   203.46 y =  -78.17 z =   -7.99
+Green ball  at x =   246.80 y =  -28.17 z =   -9.44
+
+
+Green ball  at x =   290.25 y =  -75.24 z =   -9.84
+Blue ball   at x =   312.30 y =  -12.70 z =   -9.53
+Red ball    at x =   289.86 y =   51.14 z =   -8.55
+Blue ball   at x =   204.36 y =   52.07 z =   -7.76
+Yellow ball at x =   181.79 y =  -16.25 z =   -6.82
+Yellow ball at x =   201.42 y =  -80.18 z =   -9.06
+Green ball  at x =   246.66 y =  -28.39 z =   -9.78
+
+
+Taped down the grid. It may have moved a little. < 5mm x & y
+
+
+Green ball  at x =   290.49 y =  -74.44 z =   -9.55
+Blue ball   at x =   312.62 y =   -8.81 z =   -9.02
+Red ball    at x =   291.04 y =   54.41 z =   -7.79
+Blue ball   at x =   204.27 y =   54.67 z =   -7.37
+Yellow ball at x =   182.73 y =  -11.84 z =   -6.86
+Yellow ball at x =   204.45 y =  -75.43 z =   -8.44
+Green ball  at x =   248.78 y =  -22.71 z =   -9.19
+
+Green ball  at x =   290.36 y =  -75.27 z =  -10.81
+Blue ball   at x =   312.26 y =  -11.98 z =   -9.59
+Red ball    at x =   291.23 y =   54.44 z =   -8.69
+Blue ball   at x =   204.32 y =   54.68 z =   -7.39
+Yellow ball at x =   182.31 y =  -11.98 z =   -5.79
+Yellow ball at x =   204.87 y =  -78.28 z =   -9.18
+Green ball  at x =   247.76 y =  -25.15 z =  -10.27
+
+Green ball  at x =   291.13 y =  -78.78 z =  -10.18
+Blue ball   at x =   312.51 y =  -11.99 z =   -9.66
+Red ball    at x =   291.25 y =   54.58 z =   -8.60
+Blue ball   at x =   204.83 y =   54.82 z =   -9.09
+Yellow ball at x =   181.36 y =  -14.19 z =   -7.04
+Yellow ball at x =   206.56 y =  -78.93 z =   -9.13
+Green ball  at x =   248.07 y =  -22.52 z =  -10.15
+
+Green ball  at x =   291.39 y =  -74.82 z =  -11.43
+Blue ball   at x =   312.40 y =  -11.99 z =   -9.65
+Red ball    at x =   290.66 y =   54.47 z =   -8.51
+Blue ball   at x =   203.83 y =   54.55 z =   -7.76
+Yellow ball at x =   182.47 y =  -11.82 z =   -6.96
+Yellow ball at x =   204.44 y =  -78.44 z =   -7.38
+Green ball  at x =   249.47 y =  -22.88 z =   -8.82
+
+Green ball  at x =   292.00 y =  -75.26 z =  -10.49
+Blue ball   at x =   312.75 y =   -8.38 z =  -10.56
+Red ball    at x =   290.60 y =   54.74 z =   -9.43
+Blue ball   at x =   203.62 y =   54.49 z =   -8.15
+Yellow ball at x =   183.53 y =  -11.97 z =   -6.77
+Yellow ball at x =   204.43 y =  -75.85 z =   -8.97
+Green ball  at x =   247.89 y =  -25.17 z =   -9.30
+
+ball dia 1.6550 in
+
+plunge vs unplunge
+x =   247.89 y =  -25.17 z =   -9.30
+x =   245.62 y =  -27.92 z =  -18.47
+
+x =   312.52 y =  -11.99 z =   -9.32
+x =   312.25 y =  -12.41 z =  -18.47
+
+x =   291.24 y =   54.30 z =   -8.74
+x =   290.23 y =   54.67 z =  -18.17
+
+x =   204.60 y =   54.76 z =   -7.49
+x =   203.67 y =   54.51 z =  -17.80
+
+x =   182.87 y =  -12.18 z =   -7.26
+x =   182.12 y =  -14.16 z =  -18.07
+
+observation 1
+x =   276.94 y =   -3.84 z =  154.75
+0 106 57 9 (255, 251, 206) ball 6
+1 48 59 8 (205, 229, 255) ball 4
+2 77 66 8 (255, 254, 221) ball 5
+3 109 17 10 (178, 253, 233) ball 1
+4 83 40 9 (181, 255, 240) ball 7
+5 44 18 11 (255, 167, 172) ball 3
+6
+observation 2
+x =   276.94 y =   -3.84 z =  154.75
+0 110 17 11 (174, 250, 228) ball 1
+1 83 38 10 (172, 254, 233) ball 7
+2 49 58 8 (200, 223, 255) ball 4
+3 106 58 8 (255, 254, 215) ball 6
+4 77 66 8 (255, 254, 219) ball 5
+5 43 18 10 (255, 171, 180) ball 3
+
+observation 3
+x =   213.09 y =   -8.47 z =   45.68
+0 124 55 15 (248, 219, 178) ball 6
+1 76 72 15 (255, 251, 210) ball 5
+2 27 58 15 (168, 193, 250) ball 4
+3 85 23 17 (154, 253, 236) ball 7
+
+observation 4
+x =   176.74 y =  -52.77 z =   -1.97
+0 32 78 22 (252, 225, 197) ball 5
+1 90 41 23 (255, 243, 209) ball 6
+
+observation 5
+x =   278.23 y =   52.14 z =   18.18
+0 136 43 20 (177, 200, 239) ball 2
+1 73 52 18 (255, 152, 156) ball 3
+
+observation 6
+x =   248.96 y =   50.12 z =  -27.16
+0 78 44 30 (249, 126, 128) ball 3
+
+observation 7
+x =   151.87 y =   -9.91 z =   -1.55
+0 72 45 24 (253, 252, 210) ball 5
+
+observation 8
+x =   219.57 y =   13.51 z =   95.55
+0 86 60 12 (255, 254, 211) ball 5
+1 98 22 13 (162, 252, 228) ball 7
+2 48 47 12 (192, 221, 255) ball 4
+3 124 50 12 (255, 233, 189) ball 6
+
+observation 9
+x =   232.94 y =  -60.04 z =   66.48
+0 88 59 13 (255, 254, 211) ball 6
+1 45 40 14 (162, 255, 239) ball 7
+2 53 79 12 (255, 251, 208) ball 5
