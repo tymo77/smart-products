@@ -60,7 +60,7 @@ from the lab lin directory.
 |       :
 |       :
 |   +-- n/
-|       +-- labN.cpp/
+|       +-- main.cpp/
 |       +-- instructions/
 |       +-- lin/
 |           +-- makefile
@@ -71,3 +71,6 @@ from the lab lin directory.
 ## Authors
 
 * **Tyler Morrison** (morrison.730)
+
+Labs 6-10, Project, Motor_Project:
+* **Yuan Gao** (gao.1492)
