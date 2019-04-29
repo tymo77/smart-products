@@ -34,7 +34,7 @@ namespace sp {
 		
 		std::cerr << "CAUTION: CHANGING THE I2C ADDRESS IS CURRENTLY UNSTABLE" << std::endl;
 		std::cout << "Changing i2c address of LidarLite device to 0x" << std::setbase(16) << new_address << std::setbase(10) << std::endl;
-		
+		takeI2CBus();
 		
 		try {
 			
@@ -86,7 +86,7 @@ namespace sp {
 
 		//~ // Get start time for measuring time elapsed and timing out.
 		//~ std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-		
+		takeI2CBus();
 		if(not free_running){
 			if(bias_correct){
 				this->write_8bit(LidarLite::REG_ACQ_COMMAND,0x04);
@@ -120,7 +120,7 @@ namespace sp {
 	*/
 	int LidarLite::measure_velocity() {
 
-		
+		takeI2CBus();
 		// Read low bye
 		this->write_8bit(REG_VELOCITY);
 		int8_t vel = this->read_8bit();
@@ -135,6 +135,7 @@ namespace sp {
 
 	*/
 	void LidarLite::enable_receiver_bias_correction(bool enable) {
+		takeI2CBus();
 		if (enable) {
 			this->write_8bit(LidarLite::REG_ACQ_COMMAND, 0x04);
 		}
@@ -150,6 +151,7 @@ namespace sp {
 
 	*/
 	void LidarLite::enable_free_running(bool enable){
+		takeI2CBus();
 		if (enable) {
 			this->write_8bit(LidarLite::REG_OUTER_LOOP_COUNT, 0xff);
 		}
@@ -170,6 +172,7 @@ namespace sp {
 		@param count - new integer number of measurements taken per command 0 corresponds to 1.
 	*/
 	void LidarLite::set_measurements_per_cmd(int count){
+		takeI2CBus();
 		this->write_8bit(LidarLite::REG_OUTER_LOOP_COUNT,count);
 		this->measurements_per_cmd = count;
 	};
@@ -180,7 +183,21 @@ namespace sp {
 	
 	*/
 	void LidarLite::reset_settings() {
+		takeI2CBus();
 		this->resilient_write_8bit(LidarLite::REG_ACQ_COMMAND, 0);
 	};
+	
+	int LidarLite::takeI2CBus()
+{
+	/*
+	Sets the I2C to communicate with this device
+	*/
+	if (ioctl(this->fd, I2C_SLAVE, this->DEF_I2C_ADDRESS) < 0)
+	{
+		printf("problem setting slave\n");
+		return -1;
+	}
+	return 0;
+}
 
 }

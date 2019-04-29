@@ -2,7 +2,9 @@
 #define SMART_PRODUCTS_LIDARLITE_H
 
 #include "I2C.h"
-
+#include <sys/ioctl.h>
+#include <linux/i2c-dev.h>
+#include <linux/i2c.h>
 namespace sp {
 
 	class LidarLite : public I2C {
@@ -101,6 +103,8 @@ namespace sp {
 		I do not believe this resets the i2c address. I think that can only be reset with a power cycle.
 		*/
 		void reset_settings();
+		
+		int takeI2CBus();
 
 	};
 

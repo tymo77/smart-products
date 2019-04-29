@@ -51,8 +51,8 @@ extern int fd;
 
 int fd=serialOpen( "/dev/ttyUSB0",BAUD_RATE);
 
-//~ void UpToLevel(float, DCMotor&, LidarLite&);
-//~ void DownToLevel(float, DCMotor&, LidarLite&);
+void UpToLevel(float, DCMotor&, sp::LidarLite&);
+void DownToLevel(float, DCMotor&, sp::LidarLite&);
 
 void openStageGates(ServoHat &SH,float , float);
 void closeStageGates(ServoHat &SH,float , float);
@@ -114,43 +114,47 @@ int main(int argc,char *argv[] ) {
 	//usleep(1000);
 	
 	
-	//sp::LidarLite LL;
-	//int i2c1_fd = LL.get_fd();
-	//~ usleep(1000);
+	sp::LidarLite LL;
+	int i2c1_fd = LL.get_fd();
+	usleep(1000);
 
 	//Servos
-	sp::I2C _i2c(0x05);
-	int i2c1_fd = _i2c.get_fd();
+	//sp::I2C _i2c(0x05);
+	//int i2c1_fd = _i2c.get_fd();
 	ServoHat SH(i2c1_fd);//using same fd to share i2c bus
 	SH.setupServo();
 	usleep(1000);
 	
     //printf("\r\n======End of ROBOT Main Routine ======\r\n");		
     printf("\r\n======Entering  Elevator Main Routine ======\r\n");	
-    float platform_height = 20; //cm set these
-    float level1_height = 30; //cm set these
-    float level2_height = 40; //cm set these
+    float platform_height = 34; //cm set these
+    float level1_height = 59; //cm set these
+    float level2_height = 87; //cm set these
     float ang00, ang01, ang10,ang11,ang20,ang21,ang30,ang31;
-    ang00 = 90; ang01 = 0; ang10 =  -90; ang11 =  0; ang20 =  90; ang21 =  0; ang30 =  -90; ang31 =  0;
+    ang00 = 90; ang01 = 0; ang10 =  -90; ang11 =  0; ang20 =  90; ang21 =  0; ang30 =  -90; ang31 =  10;
 	SH.setAngle(0, 0);
 	SH.setAngle(1, 0);
 	SH.setAngle(2, 0);
-	SH.setAngle(3, 0);
+	SH.setAngle(3, 10);
       	//setupSwitch(motor);
+      	//DownToLevel(platform_height, motor, LL);
       	usleep(4000000);
       	printf("\r\n======Opening Bottom Gates ======\r\n");
       	openStageGates(SH,ang00,ang10);
       	usleep(4000000);
+      	printf("\r\n======closing Bottom Gates ======\r\n");
       	closeStageGates(SH,ang01,ang11);
-      	//~ UpToLevel( level1_height, motor, LL);
+      	UpToLevel(level1_height, motor, LL);
+      	printf("\r\n======reached level1======\r\n");
       	openLeftGate(SH,ang20);
       	usleep(4000000);
       	closeLeftGate(SH,ang21);
-      	//~ UpToLevel( level2_height, motor, LL);
+      	UpToLevel(level2_height, motor, LL);
+      	printf("\r\n======reached level2======\r\n");
       	openRightGate(SH,ang30);
       	usleep(4000000);
       	closeRightGate(SH,ang31);
-      	//~ DownToLevel( platform_height, motor, LL);
+      	DownToLevel(platform_height, motor, LL);
 	motor.stopDCMotor();
       	
 	usleep(1000000);
@@ -188,6 +192,9 @@ void UpToLevel(float height, DCMotor &motor, sp::LidarLite &LL)
 	while(avg<height)
 	{
 		dist = ((float)LL.measure_dist());
+		if(dist>(avg+10)){//filter error reading
+			dist = ((float)LL.measure_dist());
+			}
 		moving_avg.push_front(dist);
 		moving_avg.pop_back();	
 		temp = 0;
@@ -196,7 +203,7 @@ void UpToLevel(float height, DCMotor &motor, sp::LidarLite &LL)
 			temp += moving_avg[j];
 		}
 		avg = temp/10.0;
-		//std::cout<<" Distance and Moving average is : (" << dist<< ", "<<avg<<")"<< std::endl;
+		std::cout<<" Distance and Moving average is : (" << dist<< ", "<<avg<<")"<< std::endl;
 		usleep(1000);
 	}
 	motor.updateSpeed(0);
@@ -231,6 +238,9 @@ void DownToLevel(float height, DCMotor &motor, sp::LidarLite &LL)
 	while(avg>height)
 	{
 		dist = ((float)LL.measure_dist());
+		if(dist<(avg-10)){//filter error reading
+			dist = ((float)LL.measure_dist());
+			}
 		moving_avg.push_front(dist);
 		moving_avg.pop_back();	
 		temp = 0;
@@ -239,7 +249,7 @@ void DownToLevel(float height, DCMotor &motor, sp::LidarLite &LL)
 			temp += moving_avg[j];
 		}
 		avg = temp/10.0;
-		//std::cout<<" Distance and Moving average is : (" << dist<< ", "<<avg<<")"<< std::endl;
+		std::cout<<" Distance and Moving average is : (" << dist<< ", "<<avg<<")"<< std::endl;
 		usleep(1000);
 	}
 	motor.updateSpeed(0);

@@ -150,7 +150,7 @@ int main(int argc, char* argv[]){
 			}
 		}
 		
-		bot.goTo(target_pos[0] - 8.0,target_pos[1],target_pos[2] + R_ball - 14.0);//Pick
+		bot.goTo(target_pos[0] - 3.0,target_pos[1],target_pos[2] + R_ball - 14.0);//Pick
 		bot.suctionOn();
 		bot.goHome();
 		bot.goRamp2();
