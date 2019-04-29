@@ -4,7 +4,7 @@ This repository contains all my code for Dr. Metzler's Spring 2019 Smart Product
 
 ## Getting Started
 
-The course consists of a series of labs. The code needed for each lab can be found in the [labs](labs/) subdirectories by number. Each lab has a subdirectory for builds on both Windows [(eg)](labs/1/win/) and Linux [(eg)](labs/2/lin/) with nmake and GNU make makefiles accordingly. Instructions and references for the lab are also contained in the /instructions subdirectories [(eg)](labs/1/instructions/).
+The course consists of a series of labs. The code needed for each lab can be found in the [labs](labs/) subdirectories by number. Some labs have a subdirectory for builds on both Windows [(eg)](labs/1/win/) and Linux [(eg)](labs/2/lin/) with nmake and GNU make makefiles accordingly. Instructions and references for the lab are also contained in the /instructions subdirectories [(eg)](labs/1/instructions/).
 
 To build a lab on Windows, run 
 
@@ -70,7 +70,8 @@ from the lab lin directory.
 
 ## Authors
 
+All:
 * **Tyler Morrison** (morrison.730)
 
-Labs 6-10, Project, Motor_Project:
+Labs 6-10, project, project_motors:
 * **Yuan Gao** (gao.1492)
